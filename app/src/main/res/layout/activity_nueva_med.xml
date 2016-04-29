@@ -29,14 +29,24 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:text="@string/lblTitNuevaMed"
-                android:id="@+id/lblTitNuevaMed"
+                android:id="@+id/lblTitMed"
                 android:layout_gravity="center_horizontal" />
+
+            <Switch
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/lblActiva"
+                android:id="@+id/swActiva"
+                android:layout_gravity="right"
+                android:checked="true"
+                android:layout_marginTop="30dp" />
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/linNombre">
+                android:id="@+id/linNombre"
+                android:layout_marginTop="10dp">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -44,14 +54,14 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:text="@string/lblNuevaMed"
                     android:id="@+id/lblNuevaMed"
-                    android:layout_marginTop="40dp" />
+                    android:layout_marginTop="10dp" />
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/txtNuevaMed"
+                    android:id="@+id/txtMedNombre"
                     android:layout_weight="1"
-                    android:layout_marginTop="35dp"
+                    android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp" />
             </LinearLayout>
 
@@ -70,9 +80,9 @@
                     android:layout_marginTop="10dp" />
 
                 <EditText
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:id="@+id/txtDosisDetalle"
+                    android:id="@+id/txtMedDetalle"
                     android:layout_weight="1"
                     android:layout_marginTop="5dp"
                     android:layout_marginLeft="10dp" />

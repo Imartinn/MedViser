@@ -3,7 +3,7 @@
     <string name="action_settings">Settings</string>
     <string name="lblDias">Dias:</string>
     <string name="lblTomas">Tomas</string>
-    <string name="lblTitNuevaMed">Nueva Medicina</string>
+    <string name="lblTitNuevaMed">Medicina</string>
     <string name="lblNuevaMed">Nombre:</string>
     <string name="lblDetallesMed">Detalles:</string>
     <string name="lblHoraToma">Hora:</string>
@@ -15,4 +15,6 @@
     <string name="lblViernes">V</string>
     <string name="lblSabado">S</string>
     <string name="lblDomingo">D</string>
+    <string name="lblActiva">Activa</string>
+    <string name="titleSeleccionaHora">Selecciona la hora</string>
 </resources>

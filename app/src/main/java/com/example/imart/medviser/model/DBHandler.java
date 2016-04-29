@@ -11,20 +11,15 @@ import android.database.sqlite.SQLiteOpenHelper;
  */
 public class DBHandler extends SQLiteOpenHelper {
 
-    private final String DB_CREATE = "CREATE TABLE meds ( id integer primary key not null, nombre varchar(30) not null, " +
-            "detalles varchar(30) not null ); CREATE TABLE tomas ( idToma integer primary key not null, " +
-            "idMed integer not null, lunes bit not null, martes bit not null, miercoles bit not null, " +
-            "jueves bit not null, viernes bit not null, sabado bit not null, domingo bit not null, " +
-            "detalles varchar(30) not null, hora time not null, foreign key (idMed) references meds(id));";
-
-    private final String DB_DROP = "DROP TABLE IF EXISTS meds; DROP TABLE IF EXISTS tomas;";
-
     private final String TABLE_MEDS = "meds";
     private final String TABLE_TOMAS = "tomas";
+    private final String TABLE_REGISTROS = "registros";
+    private final String TABLE_ESTADOS = "estados";
 
-    private final String MEDS_COLUM_ID = "id";
+    private final String MEDS_COLUM_IDMED = "idMed";
     private final String MEDS_COLUM_NOMBRE = "nombre";
     private final String MEDS_COLUM_DETALLES = "detalles";
+    private final String MEDS_COLUM_ACTIVO = "enActivo";
 
     private final String TOMAS_COLUM_IDTOMA = "idToma";
     private final String TOMAS_COLUM_IDMED = "idMed";
@@ -38,6 +33,31 @@ public class DBHandler extends SQLiteOpenHelper {
     private final String TOMAS_COLUM_DETALLES = "detalles";
     private final String TOMAS_COLUM_HORA = "hora";
 
+    private final String REG_COLUM_IDREG = "idReg";
+    private final String REG_COLUM_IDMED = "idMed";
+    private final String REG_COLUM_HORATOMA = "horaToma";
+    private final String REG_COLUM_FECHAREG = "fechaRegistro";
+    private final String REG_COLUM_HORAREG = "horaRegistro";
+    private final String REG_COLUM_ESTADO = "estadoToma";
+
+    private final String ESTADO_COLUM_IDESTADO = "idEstado";
+    private final String ESTADO_COLUM_NOMBRE = "nombreEstado";
+
+
+    private final String DB_CREATE = "CREATE TABLE " + TABLE_MEDS+ " ( "+ MEDS_COLUM_IDMED +" long primary key not null, "+MEDS_COLUM_NOMBRE+" varchar(30) not null, " +
+            MEDS_COLUM_DETALLES+" varchar(30) not null, "+MEDS_COLUM_ACTIVO+" bit not null ); CREATE TABLE "+TABLE_TOMAS+" ( "+TOMAS_COLUM_IDTOMA+" long primary key not null, "
+            +TOMAS_COLUM_IDMED+" long not null, "+TOMAS_COLUM_LUNES+" bit not null, "+TOMAS_COLUM_MARTES+" bit not null, "+TOMAS_COLUM_MIERCOLES+" bit not null, " +
+            TOMAS_COLUM_JUEVES+" bit not null, "+TOMAS_COLUM_VIERNES+" bit not null, "+TOMAS_COLUM_SABADO+" bit not null, "+TOMAS_COLUM_DOMINGO+" bit not null, " +
+            TOMAS_COLUM_DETALLES+" varchar(30) not null,"+TOMAS_COLUM_HORA+" time not null, foreign key ("+TOMAS_COLUM_IDMED+") references meds("+MEDS_COLUM_IDMED+"));" +
+            "CREATE TABLE " + TABLE_REGISTROS + " ( "+ REG_COLUM_IDREG + " long primary key not null, "+REG_COLUM_IDMED+" long not null, "+
+            REG_COLUM_HORATOMA + " time not null, " + REG_COLUM_FECHAREG + " date not null, " + REG_COLUM_HORAREG + " time, " + REG_COLUM_ESTADO + "long not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
+            " CREATE TABLE " + TABLE_ESTADOS + "( "+ ESTADO_COLUM_IDESTADO + " long primary key not null, " + ESTADO_COLUM_NOMBRE + " varchar(20) not null);";
+
+    private final String DB_DROP = "DROP TABLE IF EXISTS "+TABLE_MEDS+"; DROP TABLE IF EXISTS "+TABLE_TOMAS+";";
+
+    public DBHandler(Context ctx){
+        super(ctx, "DB_MEDS", null, 1);
+    }
 
     public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);
@@ -58,15 +78,16 @@ public class DBHandler extends SQLiteOpenHelper {
         onCreate(sqLiteDatabase);
     }
 
-    public long insertarMed(String nombre, String detalles) {
+    public long insertarMed(String nombre, String detalles, boolean activo) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(MEDS_COLUM_NOMBRE, nombre);
         contentValues.put(MEDS_COLUM_DETALLES, detalles);
+        contentValues.put(MEDS_COLUM_ACTIVO, activo);
         return db.insert(TABLE_MEDS, null, contentValues);
     }
 
-    public long insertarTomas(int idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes,
+    public long insertarTomas(long idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes,
                               boolean sabado, boolean domingo, String detalles, String hora) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -82,4 +103,44 @@ public class DBHandler extends SQLiteOpenHelper {
         contentValues.put(TOMAS_COLUM_HORA, hora);
         return db.insert(TABLE_TOMAS, null, contentValues);
     }
+
+    public long insertarTomas(ObjToma objToma) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TOMAS_COLUM_IDMED, objToma.getIdMed());
+        contentValues.put(TOMAS_COLUM_LUNES, objToma.isLunes());
+        contentValues.put(TOMAS_COLUM_MARTES, objToma.isMartes());
+        contentValues.put(TOMAS_COLUM_MIERCOLES, objToma.isMiercoles());
+        contentValues.put(TOMAS_COLUM_JUEVES, objToma.isJueves());
+        contentValues.put(TOMAS_COLUM_VIERNES, objToma.isViernes());
+        contentValues.put(TOMAS_COLUM_SABADO, objToma.isSabado());
+        contentValues.put(TOMAS_COLUM_DOMINGO, objToma.isDomingo());
+        contentValues.put(TOMAS_COLUM_DETALLES, objToma.getDetalles());
+        contentValues.put(TOMAS_COLUM_HORA, objToma.getHora());
+        return db.insert(TABLE_TOMAS, null, contentValues);
+    }
+
+    public long insertarRegistro(long idReg, long idMed, String horaToma, String fechaReg, String horaRegistro, long estado) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(REG_COLUM_IDMED, idMed);
+        contentValues.put(REG_COLUM_HORATOMA, horaToma);
+        contentValues.put(REG_COLUM_FECHAREG, horaRegistro);
+        contentValues.put(REG_COLUM_HORAREG, horaRegistro);
+        contentValues.put(REG_COLUM_ESTADO, estado);
+        return db.insert(TABLE_REGISTROS, null, contentValues);
+    }
+
+    public long insertarEstado(long idEstado, String nombreEstado) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(ESTADO_COLUM_NOMBRE, nombreEstado);
+        return db.insert(TABLE_ESTADOS, null, contentValues);
+    }
+
+    public void getTomasDeHoy() {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+    }
+
 }
