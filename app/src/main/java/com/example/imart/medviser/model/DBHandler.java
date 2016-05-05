@@ -2,9 +2,12 @@ package com.example.imart.medviser.model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
 import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
+import java.util.Calendar;
 
 /**
  * Created by imart on 28/04/2016.
@@ -138,9 +141,42 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.insert(TABLE_ESTADOS, null, contentValues);
     }
 
-    public void getTomasDeHoy() {
+    public Cursor getTomasDeHoy() {
         SQLiteDatabase db = this.getReadableDatabase();
+        String dia = null;
 
+        Calendar calendar = Calendar.getInstance();
+        int day = calendar.get(Calendar.DAY_OF_WEEK);
+
+        switch (day) {
+            case Calendar.MONDAY:
+                dia = TOMAS_COLUM_LUNES;
+                break;
+            case Calendar.TUESDAY:
+                dia = TOMAS_COLUM_MARTES;
+                break;
+            case Calendar.WEDNESDAY:
+                dia = TOMAS_COLUM_MIERCOLES;
+                break;
+            case Calendar.THURSDAY:
+                dia = TOMAS_COLUM_JUEVES;
+                break;
+            case Calendar.FRIDAY:
+                dia = TOMAS_COLUM_VIERNES;
+                break;
+            case Calendar.SATURDAY:
+                dia = TOMAS_COLUM_SABADO;
+                break;
+            case Calendar.SUNDAY:
+                dia = TOMAS_COLUM_DOMINGO;
+                break;
+        }
+
+        final String query = "SELECT " + MEDS_COLUM_NOMBRE + "," + TOMAS_COLUM_HORA + "," + TOMAS_COLUM_DETALLES +
+                " FROM " + TABLE_TOMAS + " INNER JOIN " + TABLE_MEDS + " ON " + TABLE_TOMAS + "."
+                + TOMAS_COLUM_IDMED + " = " + TABLE_MEDS + "." + MEDS_COLUM_IDMED + " WHERE " + dia + " = true";
+
+        return db.rawQuery(query, null);
     }
 
 }

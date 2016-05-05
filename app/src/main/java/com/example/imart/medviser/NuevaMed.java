@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.example.imart.medviser.model.DBHandler;
 import com.example.imart.medviser.model.ObjToma;
@@ -30,7 +31,7 @@ public class NuevaMed extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) { //TODO: Añadir boton de eliminar toma
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nueva_med);
 
@@ -78,16 +79,22 @@ public class NuevaMed extends AppCompatActivity {
             }
         });
 
-        btnNuevaHora.callOnClick(); //Generamos una linea
+        btnNuevaHora.callOnClick(); //Generamos la primera linea
     }
 
     private void cargarMed() {
 
     }
 
-    private void guardarMed() { //TODO: Comprobar campos
+    private void guardarMed() {
+
+        if(!comprobarCampos()) {
+            Toast.makeText(this, "Debe indicar el nombre del medicamento, rellenar todas las horas de las tomas y seleccionar" +
+                    " al menos un día de toma.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         DBHandler dbHandler = new DBHandler(this);
-        dbHandler.getWritableDatabase();
 
         long idMed = dbHandler.insertarMed(txtMedNombre.getText().toString(), txtMedDetalle.getText().toString(),
                 swActiva.isActivated());
@@ -97,18 +104,44 @@ public class NuevaMed extends AppCompatActivity {
             for (View v : listaTomas) {
                 ObjToma objToma = new ObjToma();
                 objToma.setIdMed(idMed);
-                objToma.setLunes(((CheckBox) (v.findViewById(R.id.chkLunes))).isChecked());
-                objToma.setMartes(((CheckBox) (v.findViewById(R.id.chkMartes))).isChecked());
-                objToma.setMiercoles(((CheckBox) (v.findViewById(R.id.chkMiercoles))).isChecked());
-                objToma.setJueves(((CheckBox) (v.findViewById(R.id.chkJueves))).isChecked());
-                objToma.setViernes(((CheckBox) (v.findViewById(R.id.chkViernes))).isChecked());
-                objToma.setSabado(((CheckBox) (v.findViewById(R.id.chkSabado))).isChecked());
-                objToma.setDomingo(((CheckBox) (v.findViewById(R.id.chkDomingo))).isChecked());
+//                objToma.setLunes(((CheckBox) (v.findViewById(R.id.chkLunes))).isChecked());
+//                objToma.setMartes(((CheckBox) (v.findViewById(R.id.chkMartes))).isChecked());
+//                objToma.setMiercoles(((CheckBox) (v.findViewById(R.id.chkMiercoles))).isChecked());
+//                objToma.setJueves(((CheckBox) (v.findViewById(R.id.chkJueves))).isChecked());
+//                objToma.setViernes(((CheckBox) (v.findViewById(R.id.chkViernes))).isChecked());
+//                objToma.setSabado(((CheckBox) (v.findViewById(R.id.chkSabado))).isChecked());
+//                objToma.setDomingo(((CheckBox) (v.findViewById(R.id.chkDomingo))).isChecked());
+//                objToma.setDetalles(((EditText) (v.findViewById(R.id.txtDetallesToma))).getText().toString());
+                objToma.setLunes(chkLunes.isChecked());
+                objToma.setMartes(chkMartes.isChecked());
+                objToma.setMiercoles(chkMiercoles.isChecked());
+                objToma.setJueves(chkJueves.isChecked());
+                objToma.setViernes(chkViernes.isChecked());
+                objToma.setSabado(chkSabado.isChecked());
+                objToma.setDomingo(chkDomingo.isChecked());
                 objToma.setDetalles(((EditText) (v.findViewById(R.id.txtDetallesToma))).getText().toString());
                 objToma.setHora(((EditText) (v.findViewById(R.id.txtHoraToma))).getText().toString());
                 dbHandler.insertarTomas(objToma);
             }
 
         }
+    }
+
+    private boolean comprobarCampos() {
+        if(txtMedNombre.getText().length() < 1) {
+            return false;
+        }
+
+        for(View v : listaTomas) {
+            if(((EditText)(v).findViewById(R.id.txtHoraToma)).getText().length() < 1) {
+                return false;
+            }
+        }
+
+        if(!chkLunes.isChecked() && !chkMartes.isChecked() && !chkMiercoles.isChecked() && !chkJueves.isChecked()
+                && !chkViernes.isChecked() && !chkSabado.isChecked() && !chkDomingo.isChecked()) {
+            return false;
+        }
+        return true;
     }
 }

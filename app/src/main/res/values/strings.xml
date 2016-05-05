@@ -17,4 +17,5 @@
     <string name="lblDomingo">D</string>
     <string name="lblActiva">Activa</string>
     <string name="titleSeleccionaHora">Selecciona la hora</string>
+    <string name="lblTitLista">HOY</string>
 </resources>
