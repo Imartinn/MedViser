@@ -10,10 +10,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ListView;
 
 import com.example.imart.medviser.model.DBHandler;
+import com.example.imart.medviser.model.adaptador_lista;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    ListView listaTomasHoy;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,6 +27,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        listaTomasHoy = (ListView) this.findViewById(R.id.listaTomasHoy);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
@@ -39,6 +47,18 @@ public class MainActivity extends AppCompatActivity {
     private void cargarTomasHoy() {
         DBHandler dbHandler = new DBHandler(this);
         Cursor c = dbHandler.getTomasDeHoy();
+
+        String[][] listaDatos = new String[c.getCount()][c.getColumnCount()];
+
+        for(int i = 0; i < c.getCount(); i++) {
+            c.moveToNext();
+            for (int j = 0; j < c.getColumnCount(); j++) {
+                listaDatos[i][j] = c.getString(j+1);
+            }
+        }
+
+
+        listaTomasHoy.setAdapter(new adaptador_lista(listaDatos));
 
 
     }

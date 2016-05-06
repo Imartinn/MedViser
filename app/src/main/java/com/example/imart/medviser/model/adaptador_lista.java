@@ -1,16 +1,14 @@
 package com.example.imart.medviser.model;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.imart.medviser.MainActivity;
 import com.example.imart.medviser.R;
 
 /**
@@ -20,16 +18,16 @@ public class adaptador_lista extends BaseAdapter {
 
     private String nombreMed, horaMed, detallesToma;
     private Context context;
-    private int[] imageId;
+    private Bitmap imageId;
     private static LayoutInflater inflater=null;
 
 
-    public adaptador_lista(String nombreMed, String horaMed, String detallesToma, Context context, int[] imageId) {
+    public adaptador_lista(String nombreMed, String horaMed, String detallesToma) {
         this.nombreMed = nombreMed;
         this.horaMed = horaMed;
         this.detallesToma = detallesToma;
-        this.context = context;
-        this.imageId = imageId;
+        //this.context = context;
+        //this.imageId = imageId;
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
@@ -58,6 +56,7 @@ public class adaptador_lista extends BaseAdapter {
         ((TextView)v.findViewById(R.id.txtHoraToma)).setText(horaMed);
         ((TextView)v.findViewById(R.id.txtDetallesToma)).setText(detallesToma);
         ImageButton btnTomar = ((ImageButton)v.findViewById(R.id.btnTomar));
+        //btnTomar.setImageBitmap(imageId);
         btnTomar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -27,7 +27,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/listaTomasHoy"
         android:layout_below="@+id/lblHoy"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="20dp" />
+        android:layout_alignParentEnd="true" />
 
 </RelativeLayout>
