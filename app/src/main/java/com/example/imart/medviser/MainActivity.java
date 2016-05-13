@@ -2,20 +2,25 @@ package com.example.imart.medviser;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteException;
+import android.graphics.Path;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.adaptador_lista;
+import com.example.imart.medviser.model.Adaptador_lista;
 
-import java.util.ArrayList;
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,26 +46,40 @@ public class MainActivity extends AppCompatActivity {
             });
         }
 
-        cargarTomasHoy();
+        String dbname = "mydb.db";
+        File dbpath = this.getDatabasePath(dbname);
+        Log.i("PATH", dbpath.getAbsolutePath());
+
     }
 
     private void cargarTomasHoy() {
         DBHandler dbHandler = new DBHandler(this);
-        Cursor c = dbHandler.getTomasDeHoy();
 
-        String[][] listaDatos = new String[c.getCount()][c.getColumnCount()];
+        try {
+            Cursor c = dbHandler.getTomasDeHoy();
 
-        for(int i = 0; i < c.getCount(); i++) {
-            c.moveToNext();
-            for (int j = 0; j < c.getColumnCount(); j++) {
-                listaDatos[i][j] = c.getString(j+1);
+            String[][] listaDatos = new String[c.getCount()][c.getColumnCount()];
+
+            for (int i = 0; i < c.getCount(); i++) {
+                c.moveToNext();
+                for (int j = 0; j < c.getColumnCount(); j++) {
+                    listaDatos[i][j] = c.getString(j + 1);
+                }
             }
+
+            listaTomasHoy.setAdapter(new Adaptador_lista(this, listaDatos));
+        } catch (SQLiteException e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Cursor c = dbHandler.getTablas();
+            String cadena = "";
+            while(c.moveToNext()) {
+                cadena += "\n";
+                for (int j = 0; j < c.getColumnCount(); j++) {
+                    cadena += c.getString(j);
+                }
+            }
+            ((TextView)this.findViewById(R.id.txtDebug)).setText(cadena);
         }
-
-
-        listaTomasHoy.setAdapter(new adaptador_lista(listaDatos));
-
-
     }
 
     @Override

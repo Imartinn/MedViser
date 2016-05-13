@@ -58,28 +58,22 @@ public class DBHandler extends SQLiteOpenHelper {
 
     private final String DB_DROP = "DROP TABLE IF EXISTS "+TABLE_MEDS+"; DROP TABLE IF EXISTS "+TABLE_TOMAS+";";
 
+
     public DBHandler(Context ctx){
         super(ctx, "DB_MEDS", null, 1);
     }
 
-    public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, name, factory, version);
-    }
-
-    public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version, DatabaseErrorHandler errorHandler) {
-        super(context, name, factory, version, errorHandler);
+    @Override
+    public void onCreate(SQLiteDatabase db) {
+        db.execSQL(DB_CREATE);
     }
 
     @Override
-    public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(DB_CREATE);
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL(DB_DROP);
+        onCreate(db);
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-        sqLiteDatabase.execSQL(DB_DROP);
-        onCreate(sqLiteDatabase);
-    }
 
     public long insertarMed(String nombre, String detalles, boolean activo) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -177,6 +171,11 @@ public class DBHandler extends SQLiteOpenHelper {
                 + TOMAS_COLUM_IDMED + " = " + TABLE_MEDS + "." + MEDS_COLUM_IDMED + " WHERE " + dia + " = true";
 
         return db.rawQuery(query, null);
+    }
+
+    public Cursor getTablas() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        return db.rawQuery("SELECT * FROM sqlite_master", null);
     }
 
 }
