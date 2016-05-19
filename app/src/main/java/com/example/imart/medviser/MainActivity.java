@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
         File dbpath = this.getDatabasePath(dbname);
         Log.i("PATH", dbpath.getAbsolutePath());
 
+        cargarTomasHoy();
+
     }
 
     private void cargarTomasHoy() {
@@ -69,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
             listaTomasHoy.setAdapter(new Adaptador_lista(this, listaDatos));
         } catch (SQLiteException e) {
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             Cursor c = dbHandler.getTablas();
             String cadena = "";
             while(c.moveToNext()) {

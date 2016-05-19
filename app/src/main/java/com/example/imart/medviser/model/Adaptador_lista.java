@@ -56,7 +56,7 @@ public class Adaptador_lista extends BaseAdapter {
         btnTomar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                //TODO Insertar toma
             }
         });
 
