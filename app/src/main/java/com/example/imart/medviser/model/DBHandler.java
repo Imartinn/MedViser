@@ -53,7 +53,7 @@ public class DBHandler extends SQLiteOpenHelper {
             TOMAS_COLUM_JUEVES+" bit not null, "+TOMAS_COLUM_VIERNES+" bit not null, "+TOMAS_COLUM_SABADO+" bit not null, "+TOMAS_COLUM_DOMINGO+" bit not null, " +
             TOMAS_COLUM_DETALLES+" varchar(30) not null,"+TOMAS_COLUM_HORA+" time not null, foreign key ("+TOMAS_COLUM_IDMED+") references meds("+MEDS_COLUM_IDMED+"));" +
             "CREATE TABLE " + TABLE_REGISTROS + " ( "+ REG_COLUM_IDREG + " long primary key not null, "+REG_COLUM_IDMED+" long not null, "+
-            REG_COLUM_HORATOMA + " time not null, " + REG_COLUM_FECHAREG + " date not null, " + REG_COLUM_HORAREG + " time, " + REG_COLUM_ESTADO + " long not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
+            REG_COLUM_HORATOMA + " time not null, " + REG_COLUM_FECHAREG + " date not null, "/* + REG_COLUM_HORAREG + " time, " */+ REG_COLUM_ESTADO + " long not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
             " CREATE TABLE " + TABLE_ESTADOS + "( "+ ESTADO_COLUM_IDESTADO + " long primary key not null, " + ESTADO_COLUM_NOMBRE + " varchar(20) not null);";
 
     private final String DB_DROP = "DROP TABLE IF EXISTS "+TABLE_MEDS+"; DROP TABLE IF EXISTS "+TABLE_TOMAS+";";
@@ -122,13 +122,13 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.insert(TABLE_TOMAS, null, contentValues);
     }
 
-    public long insertarRegistro(long idReg, long idMed, String horaToma, String fechaReg, String horaRegistro, long estado) {
+    public long insertarRegistro(long idReg, long idMed, String horaToma, String fechaReg,/* String horaRegistro,*/ long estado) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(REG_COLUM_IDMED, idMed);
         contentValues.put(REG_COLUM_HORATOMA, horaToma);
-        contentValues.put(REG_COLUM_FECHAREG, horaRegistro);
-        contentValues.put(REG_COLUM_HORAREG, horaRegistro);
+        contentValues.put(REG_COLUM_FECHAREG, fechaReg);
+//        contentValues.put(REG_COLUM_HORAREG, horaRegistro);
         contentValues.put(REG_COLUM_ESTADO, estado);
         return db.insert(TABLE_REGISTROS, null, contentValues);
     }
@@ -171,7 +171,8 @@ public class DBHandler extends SQLiteOpenHelper {
                 break;
         }
 
-        final String query = "SELECT " + MEDS_COLUM_NOMBRE + "," + TOMAS_COLUM_HORA + "," + TABLE_TOMAS + "." + TOMAS_COLUM_DETALLES +
+        final String query = "SELECT " + TABLE_TOMAS + "." + TOMAS_COLUM_IDMED + "," + MEDS_COLUM_NOMBRE + ","
+                + TOMAS_COLUM_HORA + "," + TABLE_TOMAS + "." + TOMAS_COLUM_DETALLES +
                 " FROM " + TABLE_TOMAS + " INNER JOIN " + TABLE_MEDS + " ON " + TABLE_TOMAS + "."
                 + TOMAS_COLUM_IDMED + " = " + TABLE_MEDS + "." + MEDS_COLUM_IDMED + " WHERE " + dia + " = 1";
 
