@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -22,11 +23,12 @@ import java.util.ArrayList;
 public class NuevaMed extends AppCompatActivity {
 
     private LayoutInflater inflater;
-    private final LinearLayout linToma = (LinearLayout) this.findViewById(R.id.linToma);
+    private LinearLayout linToma = null;
 
     private EditText txtMedNombre, txtMedDetalle;
     private CheckBox chkLunes, chkMartes, chkMiercoles, chkJueves, chkViernes, chkSabado, chkDomingo;
     private Switch swActiva;
+    private Button btnInsertar;
     private ArrayList<View> listaTomas;
 
 
@@ -35,6 +37,7 @@ public class NuevaMed extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nueva_med);
 
+        linToma = (LinearLayout) this.findViewById(R.id.linToma);
         txtMedNombre = (EditText) this.findViewById(R.id.txtMedNombre);
         txtMedDetalle = (EditText) this.findViewById(R.id.txtMedDetalle);
         chkLunes = (CheckBox) this.findViewById(R.id.chkLunes);
@@ -45,6 +48,7 @@ public class NuevaMed extends AppCompatActivity {
         chkSabado = (CheckBox) this.findViewById(R.id.chkSabado);
         chkDomingo = (CheckBox) this.findViewById(R.id.chkDomingo);
         swActiva = (Switch) this.findViewById(R.id.swActiva);
+        btnInsertar = (Button) this.findViewById(R.id.btnInsertar);
         listaTomas = new ArrayList<View>();
 
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -79,7 +83,15 @@ public class NuevaMed extends AppCompatActivity {
             }
         });
 
-        btnNuevaHora.callOnClick(); //Generamos la primera linea
+        //btnNuevaHora.callOnClick(); //Generamos la primera linea
+        if(btnInsertar != null) {
+            btnInsertar.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    guardarMed();
+                }
+            });
+        }
     }
 
     private void cargarMed() {
@@ -121,7 +133,8 @@ public class NuevaMed extends AppCompatActivity {
                 objToma.setDomingo(chkDomingo.isChecked());
                 objToma.setDetalles(((EditText) (v.findViewById(R.id.txtDetallesToma))).getText().toString());
                 objToma.setHora(((EditText) (v.findViewById(R.id.txtHoraToma))).getText().toString());
-                dbHandler.insertarTomas(objToma);
+                long insert = dbHandler.insertarTomas(objToma);
+                Toast.makeText(NuevaMed.this, "Insertados: " + insert, Toast.LENGTH_SHORT).show();
             }
 
         }

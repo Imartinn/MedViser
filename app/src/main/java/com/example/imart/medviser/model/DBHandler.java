@@ -47,14 +47,14 @@ public class DBHandler extends SQLiteOpenHelper {
     private final String ESTADO_COLUM_NOMBRE = "nombreEstado";
 
 
-    private final String DB_CREATE = "CREATE TABLE " + TABLE_MEDS+ " ( "+ MEDS_COLUM_IDMED +" long primary key not null, "+MEDS_COLUM_NOMBRE+" varchar(30) not null, " +
-            MEDS_COLUM_DETALLES+" varchar(30) not null, "+MEDS_COLUM_ACTIVO+" bit not null ); CREATE TABLE "+TABLE_TOMAS+" ( "+TOMAS_COLUM_IDTOMA+" long primary key not null, "
-            +TOMAS_COLUM_IDMED+" long not null, "+TOMAS_COLUM_LUNES+" bit not null, "+TOMAS_COLUM_MARTES+" bit not null, "+TOMAS_COLUM_MIERCOLES+" bit not null, " +
+    private final String DB_CREATE = "CREATE TABLE " + TABLE_MEDS+ " ( "+ MEDS_COLUM_IDMED +" integer primary key not null, "+MEDS_COLUM_NOMBRE+" varchar(30) not null, " +
+            MEDS_COLUM_DETALLES+" varchar(30) not null, "+MEDS_COLUM_ACTIVO+" bit not null ); CREATE TABLE "+TABLE_TOMAS+" ( "+TOMAS_COLUM_IDTOMA+" integer primary key not null, "
+            +TOMAS_COLUM_IDMED+" integer not null, "+TOMAS_COLUM_LUNES+" bit not null, "+TOMAS_COLUM_MARTES+" bit not null, "+TOMAS_COLUM_MIERCOLES+" bit not null, " +
             TOMAS_COLUM_JUEVES+" bit not null, "+TOMAS_COLUM_VIERNES+" bit not null, "+TOMAS_COLUM_SABADO+" bit not null, "+TOMAS_COLUM_DOMINGO+" bit not null, " +
             TOMAS_COLUM_DETALLES+" varchar(30) not null,"+TOMAS_COLUM_HORA+" time not null, foreign key ("+TOMAS_COLUM_IDMED+") references meds("+MEDS_COLUM_IDMED+"));" +
-            "CREATE TABLE " + TABLE_REGISTROS + " ( "+ REG_COLUM_IDREG + " long primary key not null, "+REG_COLUM_IDMED+" long not null, "+
-            REG_COLUM_HORATOMA + " time not null, " + REG_COLUM_FECHAREG + " date not null, "/* + REG_COLUM_HORAREG + " time, " */+ REG_COLUM_ESTADO + " long not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
-            " CREATE TABLE " + TABLE_ESTADOS + "( "+ ESTADO_COLUM_IDESTADO + " long primary key not null, " + ESTADO_COLUM_NOMBRE + " varchar(20) not null);";
+            "CREATE TABLE " + TABLE_REGISTROS + " ( "+ REG_COLUM_IDREG + " integer primary key not null, "+REG_COLUM_IDMED+" integer not null, "+
+            REG_COLUM_HORATOMA + " time not null, " + REG_COLUM_FECHAREG + " date not null, "/* + REG_COLUM_HORAREG + " time, " */+ REG_COLUM_ESTADO + " integer not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
+            " CREATE TABLE " + TABLE_ESTADOS + "( "+ ESTADO_COLUM_IDESTADO + " integer primary key not null, " + ESTADO_COLUM_NOMBRE + " varchar(20) not null);";
 
     private final String DB_DROP = "DROP TABLE IF EXISTS "+TABLE_MEDS+"; DROP TABLE IF EXISTS "+TABLE_TOMAS+";";
 
@@ -89,7 +89,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.insert(TABLE_MEDS, null, contentValues);
     }
 
-    public long insertarTomas(long idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes,
+    public long insertarTomas(int idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes,
                               boolean sabado, boolean domingo, String detalles, String hora) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
@@ -122,7 +122,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.insert(TABLE_TOMAS, null, contentValues);
     }
 
-    public long insertarRegistro(long idReg, long idMed, String horaToma, String fechaReg,/* String horaRegistro,*/ long estado) {
+    public long insertarRegistro(int idReg, int idMed, String horaToma, String fechaReg,/* String horaRegistro,*/ int estado) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(REG_COLUM_IDMED, idMed);
@@ -133,7 +133,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.insert(TABLE_REGISTROS, null, contentValues);
     }
 
-    public long insertarEstado(long idEstado, String nombreEstado) {
+    public long insertarEstado(int idEstado, String nombreEstado) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ESTADO_COLUM_NOMBRE, nombreEstado);

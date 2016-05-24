@@ -1,7 +1,7 @@
 package com.example.imart.medviser.model;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,13 +9,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.imart.medviser.MainActivity;
 import com.example.imart.medviser.R;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by Ignacio Martin on 5/05/16.
@@ -62,23 +59,37 @@ public class Adaptador_lista extends BaseAdapter {
         btnTomar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                String date = "";
-
-                Long miliDate = Long.parseLong(al.get(position).getDate()) * 1000;
-                date = sdf.format(miliDate);
-
-
-
-                Calendar calHoraToma = Calendar.getInstance();
-                calHoraToma.set(calHoraToma.getTime().getYear(), calHoraToma.getTime().getMonth(), calHoraToma.getTime().getDay(),
-                        Integer.parseInt(listaDatos[position][2].split(":")[0]), Integer.parseInt(listaDatos[position][2].split(":")[1]));
-
+//                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+//                String date = "";
+//
+//                Long miliDate = Long.parseLong(al.get(position).getDate()) * 1000;
+//                date = sdf.format(miliDate);
+//
+//
+//
+//                Calendar calHoraToma = Calendar.getInstance();
+//                calHoraToma.set(calHoraToma.getTime().getYear(), calHoraToma.getTime().getMonth(), calHoraToma.getTime().getDay(),
+//                        Integer.parseInt(listaDatos[position][2].split(":")[0]), Integer.parseInt(listaDatos[position][2].split(":")[1]));
+//
                 Calendar calNow = Calendar.getInstance();
-                calNow.getTime().compareTo(calHoraToma.getTime());
+//                calNow.getTime().compareTo(calHoraToma.getTime());
 
-                DBHandler dbHandler = new DBHandler(context);
-                dbHandler.insertarRegistro(null, listaDatos[position][0], calHoraToma.getTimeInMillis(), )
+                int horaActual = calNow.get(Calendar.HOUR_OF_DAY);
+                int minsActual = calNow.get(Calendar.MINUTE);
+
+                int horaToma = Integer.parseInt(listaDatos[position][2].split(":")[0]);
+                int minsToma = Integer.parseInt(listaDatos[position][2].split(":")[1]);
+
+                Log.d("ACTUAL", "HA: " + horaActual);
+                Log.d("ACTUAL", "MA: " + minsActual);
+
+                Log.d("TOMA", "HT: " + horaToma);
+                Log.d("TOMA", "HT: " + minsToma);
+
+
+
+//                DBHandler dbHandler = new DBHandler(context);
+//                dbHandler.insertarRegistro(null, listaDatos[position][0], calHoraToma.getTimeInMillis(), )
             }
         });
 
