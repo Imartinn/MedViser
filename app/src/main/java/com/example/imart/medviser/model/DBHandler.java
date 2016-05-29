@@ -38,6 +38,7 @@ public class DBHandler extends SQLiteOpenHelper {
 
     private final String REG_COLUM_IDREG = "idReg";
     private final String REG_COLUM_IDMED = "idMed";
+    private final String REG_COLUM_IDTOMA = "idToma";
     private final String REG_COLUM_HORATOMA = "horaToma";
     private final String REG_COLUM_FECHAREG = "fechaRegistro";
     private final String REG_COLUM_HORAREG = "horaRegistro";
@@ -53,7 +54,7 @@ public class DBHandler extends SQLiteOpenHelper {
             TOMAS_COLUM_JUEVES+" bit not null, "+TOMAS_COLUM_VIERNES+" bit not null, "+TOMAS_COLUM_SABADO+" bit not null, "+TOMAS_COLUM_DOMINGO+" bit not null, " +
             TOMAS_COLUM_DETALLES+" varchar(30) not null,"+TOMAS_COLUM_HORA+" time not null, foreign key ("+TOMAS_COLUM_IDMED+") references meds("+MEDS_COLUM_IDMED+"));" +
             "CREATE TABLE " + TABLE_REGISTROS + " ( "+ REG_COLUM_IDREG + " integer primary key not null, "+REG_COLUM_IDMED+" integer not null, "+
-            REG_COLUM_HORATOMA + " time not null, " + REG_COLUM_FECHAREG + " date not null, "/* + REG_COLUM_HORAREG + " time, " */+ REG_COLUM_ESTADO + " integer not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
+            REG_COLUM_IDTOMA + " int not null, " + REG_COLUM_HORATOMA + " varchar(5) not null, " + REG_COLUM_FECHAREG + " long not null, "/* + REG_COLUM_HORAREG + " time, " */+ REG_COLUM_ESTADO + " integer not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
             " CREATE TABLE " + TABLE_ESTADOS + "( "+ ESTADO_COLUM_IDESTADO + " integer primary key not null, " + ESTADO_COLUM_NOMBRE + " varchar(20) not null);";
 
     private final String DB_DROP = "DROP TABLE IF EXISTS "+TABLE_MEDS+"; DROP TABLE IF EXISTS "+TABLE_TOMAS+";";
@@ -122,10 +123,11 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.insert(TABLE_TOMAS, null, contentValues);
     }
 
-    public long insertarRegistro(int idReg, int idMed, String horaToma, String fechaReg,/* String horaRegistro,*/ int estado) {
+    public long insertarRegistro(int idToma, int idMed, String horaToma, long fechaReg,/* String horaRegistro,*/ int estado) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(REG_COLUM_IDMED, idMed);
+        contentValues.put(REG_COLUM_IDTOMA, idToma);
         contentValues.put(REG_COLUM_HORATOMA, horaToma);
         contentValues.put(REG_COLUM_FECHAREG, fechaReg);
 //        contentValues.put(REG_COLUM_HORAREG, horaRegistro);
@@ -171,12 +173,26 @@ public class DBHandler extends SQLiteOpenHelper {
                 break;
         }
 
-        final String query = "SELECT " + TABLE_TOMAS + "." + TOMAS_COLUM_IDMED + "," + MEDS_COLUM_NOMBRE + ","
+        final String query = "SELECT " + TABLE_TOMAS + "." + TOMAS_COLUM_IDMED + "," + TABLE_TOMAS +
+                "." + TOMAS_COLUM_IDTOMA + "," + MEDS_COLUM_NOMBRE + ","
                 + TOMAS_COLUM_HORA + "," + TABLE_TOMAS + "." + TOMAS_COLUM_DETALLES +
                 " FROM " + TABLE_TOMAS + " INNER JOIN " + TABLE_MEDS + " ON " + TABLE_TOMAS + "."
                 + TOMAS_COLUM_IDMED + " = " + TABLE_MEDS + "." + MEDS_COLUM_IDMED + " WHERE " + dia + " = 1";
 
         return db.rawQuery(query, null);
+    }
+
+    public String isTomada(int idToma) {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        final String query = "SELECT estado FROM " + TABLE_REGISTROS + " WHERE date(" + REG_COLUM_FECHAREG + ", 'unixepoch'," +
+                " 'localtime') = date('now') AND idToma = " + idToma + ";";
+        Cursor c = db.rawQuery(query, null);
+        if(c != null) {
+            c.moveToNext();
+            return c.getString(0);
+        }
+        return null;
     }
 
     public Cursor getTablas() {

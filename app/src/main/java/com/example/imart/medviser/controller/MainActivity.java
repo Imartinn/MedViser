@@ -1,10 +1,8 @@
-package com.example.imart.medviser;
+package com.example.imart.medviser.controller;
 
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
-import android.graphics.Path;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -17,8 +15,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.imart.medviser.R;
 import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.Adaptador_lista;
+import com.example.imart.medviser.model.adaptadorMain;
 
 import java.io.File;
 
@@ -62,14 +61,16 @@ public class MainActivity extends AppCompatActivity {
 
             String[][] listaDatos = new String[c.getCount()][c.getColumnCount()];
 
-            for (int i = 0; i < c.getCount(); i++) {
-                c.moveToNext();
+            int i = 0;
+            while(c.moveToNext()) {
                 for (int j = 0; j < c.getColumnCount(); j++) {
-                    listaDatos[i][j] = c.getString(j + 1);
+                    listaDatos[i][j] = c.getString(j);
                 }
+                i++;
             }
 
-            listaTomasHoy.setAdapter(new Adaptador_lista(this, listaDatos));
+
+            listaTomasHoy.setAdapter(new adaptadorMain(this, listaDatos));
         } catch (SQLiteException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             Cursor c = dbHandler.getTablas();

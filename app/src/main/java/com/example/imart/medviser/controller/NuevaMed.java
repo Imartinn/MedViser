@@ -1,4 +1,4 @@
-package com.example.imart.medviser;
+package com.example.imart.medviser.controller;
 
 import android.app.TimePickerDialog;
 import android.content.Context;
@@ -15,6 +15,7 @@ import android.widget.Switch;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import com.example.imart.medviser.R;
 import com.example.imart.medviser.model.DBHandler;
 import com.example.imart.medviser.model.ObjToma;
 
@@ -83,7 +84,7 @@ public class NuevaMed extends AppCompatActivity {
             }
         });
 
-        //btnNuevaHora.callOnClick(); //Generamos la primera linea
+        btnNuevaHora.callOnClick(); //Generamos la primera linea
         if(btnInsertar != null) {
             btnInsertar.setOnClickListener(new View.OnClickListener() {
                 @Override
