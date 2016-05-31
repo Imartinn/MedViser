@@ -5,25 +5,25 @@ package com.example.imart.medviser.model;
  */
 public class ObjMed {
 
-    private long idMed;
+    private int idMed;
     private String nombre;
     private String detalles;
     private boolean enActivo;
 
     public ObjMed() { }
 
-    public ObjMed(long idMed, String nombre, String detalles, boolean enActivo) {
+    public ObjMed(int idMed, String nombre, String detalles, boolean enActivo) {
         this.idMed = idMed;
         this.nombre = nombre;
         this.detalles = detalles;
         this.enActivo = enActivo;
     }
 
-    public long getIdMed() {
+    public int getIdMed() {
         return idMed;
     }
 
-    public void setIdMed(long idMed) {
+    public void setIdMed(int idMed) {
         this.idMed = idMed;
     }
 

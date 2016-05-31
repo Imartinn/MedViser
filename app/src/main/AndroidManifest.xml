@@ -8,10 +8,9 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity android:name=".controller.NuevaMed" />
+        <activity android:name=".controller.NuevaMedActivity" />
         <activity
-            android:name=".controller.Main2Activity"
+            android:name=".controller.MainActivity"
             android:label="@string/title_activity_main2"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -20,6 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".controller.ListMedsActivity"></activity>
     </application>
 
 </manifest>

@@ -11,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.imart.medviser.R;
+import com.example.imart.medviser.controller.MainActivity;
 import com.example.imart.medviser.view.objEntradaMain;
 
 import java.util.Calendar;
@@ -18,14 +19,14 @@ import java.util.Calendar;
 /**
  * Created by Ignacio Martin on 5/05/16.
  */
-public class adaptadorMain extends BaseAdapter {
+public class AdaptadorMain extends BaseAdapter {
 
     private Context context;
     private objEntradaMain[] listaTomas;
     private static LayoutInflater inflater=null;
 
 
-    public adaptadorMain(Context context, objEntradaMain[] listaTomas) {
+    public AdaptadorMain(Context context, objEntradaMain[] listaTomas) {
         this.context = context;
         this.listaTomas = listaTomas;
         inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -96,11 +97,11 @@ public class adaptadorMain extends BaseAdapter {
                 } else if (horaActual < horaToma) {
                     diferencia = 60 - minsActual;
                     diferencia += minsToma;
-                    diferencia += (horaToma - horaActual * 60)-60;
+                    diferencia += ((horaToma - horaActual) * 60)-60;
                 } else {
                     diferencia = 60 - minsToma;
                     diferencia += minsActual;
-                    diferencia += (horaActual - horaToma * 60)-60;
+                    diferencia += ((horaActual - horaToma) * 60)-60;
                 }
 
                 int estado = 0;
@@ -113,8 +114,10 @@ public class adaptadorMain extends BaseAdapter {
                 }
 
                 DBHandler dbHandler = new DBHandler(context);
-                dbHandler.insertarRegistro(-1, listaTomas[position].getIdMed(), horaToma + ":" + minsToma,
+                long res = dbHandler.insertarRegistro(listaTomas[position].getIdToma(), listaTomas[position].getIdMed(), horaToma + ":" + minsToma,
                         calNow.getTimeInMillis(), estado);
+
+                ((MainActivity)context).cargarTomasHoy();
             }
         });
 

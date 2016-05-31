@@ -5,10 +5,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
@@ -16,34 +20,47 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.imart.medviser.R;
+import com.example.imart.medviser.model.AdaptadorMain;
 import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.adaptadorMain;
+import com.example.imart.medviser.view.objEntradaMain;
 
 import java.io.File;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    ListView listaTomasHoy;
+    private    ListView listaTomasHoy;
+    private AdaptadorMain adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         listaTomasHoy = (ListView) this.findViewById(R.id.listaTomasHoy);
+
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(getApplicationContext(), NuevaMed.class);
+                    Intent i = new Intent(getApplicationContext(), NuevaMedActivity.class);
                     startActivity(i);
                 }
             });
         }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
         String dbname = "mydb.db";
         File dbpath = this.getDatabasePath(dbname);
@@ -53,24 +70,28 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void cargarTomasHoy() {
+    public void cargarTomasHoy() {
         DBHandler dbHandler = new DBHandler(this);
 
         try {
             Cursor c = dbHandler.getTomasDeHoy();
-
-            String[][] listaDatos = new String[c.getCount()][c.getColumnCount()];
+            objEntradaMain[] listaTomas = new objEntradaMain[c.getCount()];
 
             int i = 0;
             while(c.moveToNext()) {
-                for (int j = 0; j < c.getColumnCount(); j++) {
-                    listaDatos[i][j] = c.getString(j);
-                }
+                listaTomas[i] = new objEntradaMain();
+                listaTomas[i].setIdMed(Integer.parseInt(c.getString(0)));
+                listaTomas[i].setIdToma(Integer.parseInt(c.getString(1)));
+                listaTomas[i].setNombreMed(c.getString(2));
+                listaTomas[i].setHoraToma(c.getString(3));
+                listaTomas[i].setDetallesToma(c.getString(4));
+                listaTomas[i].setEstado(buscarEstado(listaTomas[i].getIdToma()));
                 i++;
             }
 
-
-            listaTomasHoy.setAdapter(new adaptadorMain(this, listaDatos));
+            adapter = new AdaptadorMain(this, listaTomas);
+            adapter.notifyDataSetChanged();
+            listaTomasHoy.setAdapter(adapter);
         } catch (SQLiteException e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             Cursor c = dbHandler.getTablas();
@@ -85,10 +106,31 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private int buscarEstado(int idToma) {
+        DBHandler dbHandler = new DBHandler(this);
+
+        String res = dbHandler.isTomada(idToma);
+
+        if(res != null) {
+            return Integer.parseInt(res);
+        }
+        return -1;
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.main2, menu);
         return true;
     }
 
@@ -105,5 +147,38 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id == R.id.nav_nuevaMed) {
+            Intent i = new Intent(getApplicationContext(), NuevaMedActivity.class);
+            startActivity(i);
+        } else if (id == R.id.nav_listaMeds) {
+            Intent i = new Intent(getApplicationContext(), ListMedsActivity.class);
+            startActivity(i);
+        } else if (id == R.id.nav_slideshow) {
+
+        } else if (id == R.id.nav_manage) {
+
+        } else if (id == R.id.nav_share) {
+
+        } else if (id == R.id.nav_send) {
+
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    protected void onResume() {
+        cargarTomasHoy();
+        super.onResume();
     }
 }
