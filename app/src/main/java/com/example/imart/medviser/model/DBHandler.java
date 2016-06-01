@@ -91,8 +91,18 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.insert(TABLE_MEDS, null, contentValues);
     }
 
-    public long insertarTomas(int idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes,
-                              boolean sabado, boolean domingo, String detalles, String hora) {
+    public long actualizarMed(int idMed, String nombre, String detalles, boolean activo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MEDS_COLUM_NOMBRE, nombre);
+        contentValues.put(MEDS_COLUM_DETALLES, detalles);
+        contentValues.put(MEDS_COLUM_ACTIVO, activo);
+        return db.update(TABLE_MEDS, contentValues, MEDS_COLUM_IDMED + " = " + idMed, null);
+    }
+
+
+    public long insertarToma(int idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes,
+                             boolean sabado, boolean domingo, String detalles, String hora) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(TOMAS_COLUM_IDMED, idMed);
@@ -108,7 +118,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return db.insert(TABLE_TOMAS, null, contentValues);
     }
 
-    public long insertarTomas(ObjToma objToma) {
+    public long insertarToma(ObjToma objToma) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(TOMAS_COLUM_IDMED, objToma.getIdMed());
@@ -122,6 +132,21 @@ public class DBHandler extends SQLiteOpenHelper {
         contentValues.put(TOMAS_COLUM_DETALLES, objToma.getDetalles());
         contentValues.put(TOMAS_COLUM_HORA, objToma.getHora());
         return db.insert(TABLE_TOMAS, null, contentValues);
+    }
+
+    public long actualizarToma(ObjToma objToma) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TOMAS_COLUM_LUNES, objToma.isLunes());
+        contentValues.put(TOMAS_COLUM_MARTES, objToma.isMartes());
+        contentValues.put(TOMAS_COLUM_MIERCOLES, objToma.isMiercoles());
+        contentValues.put(TOMAS_COLUM_JUEVES, objToma.isJueves());
+        contentValues.put(TOMAS_COLUM_VIERNES, objToma.isViernes());
+        contentValues.put(TOMAS_COLUM_SABADO, objToma.isSabado());
+        contentValues.put(TOMAS_COLUM_DOMINGO, objToma.isDomingo());
+        contentValues.put(TOMAS_COLUM_DETALLES, objToma.getDetalles());
+        contentValues.put(TOMAS_COLUM_HORA, objToma.getHora());
+        return db.update(TABLE_TOMAS, contentValues, TOMAS_COLUM_IDTOMA + " = " + objToma.getIdToma(), null);
     }
 
     public long insertarRegistro(int idToma, int idMed, String horaToma, long fechaReg,/* String horaRegistro,*/ int estado) {

@@ -2,6 +2,7 @@ package com.example.imart.medviser.model;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.os.Build;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,13 +66,21 @@ public class AdaptadorMain extends BaseAdapter {
 
         if(listaTomas[position].getEstado() == 0) {
             btnTomar.setEnabled(false);
-            btnTomar.setBackgroundColor(Color.GREEN);
+            btnTomar.setColorFilter(Color.GREEN);
         } else if(listaTomas[position].getEstado() == 1) {
             btnTomar.setEnabled(false);
-            btnTomar.setBackgroundColor(Color.YELLOW);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                btnTomar.setImageDrawable(context.getDrawable(R.drawable.aprox));
+            } else {
+                btnTomar.setImageDrawable(context.getResources().getDrawable(R.drawable.aprox));
+            }
         } else if(listaTomas[position].getEstado() == 2) {
             btnTomar.setEnabled(false);
-            btnTomar.setBackgroundColor(Color.RED);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                btnTomar.setImageDrawable(context.getDrawable(R.drawable.wrong));
+            } else {
+                btnTomar.setImageDrawable(context.getResources().getDrawable(R.drawable.wrong));
+            }
         }
 
         btnTomar.setOnClickListener(new View.OnClickListener() {

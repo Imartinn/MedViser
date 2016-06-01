@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -22,7 +23,6 @@ import com.example.imart.medviser.model.DBHandler;
 import com.example.imart.medviser.model.ObjToma;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class NuevaMedActivity extends AppCompatActivity {
 
@@ -85,6 +85,8 @@ public class NuevaMedActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 View child = inflater.inflate(R.layout.lintomahora, null); //Generamos la linea
+                TextView lblIdToma = (TextView) child.findViewById(R.id.lblIdToma);
+                lblIdToma.setText("-1");
                 final EditText hora = (EditText) child.findViewById(R.id.txtHoraToma);
                 hora.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -155,6 +157,8 @@ public class NuevaMedActivity extends AppCompatActivity {
             do {
                 //TODO: hacer update de tomas en vez de delete+insert
                 View child = inflater.inflate(R.layout.lintomahora, null); //Generamos la linea
+                TextView lblIdToma = (TextView) child.findViewById(R.id.lblIdToma);
+                lblIdToma.setText(c.getString(4));
                 EditText detalles = (EditText) child.findViewById(R.id.txtDetallesToma);
                 detalles.setText(c.getString(13));
                 final EditText hora = (EditText) child.findViewById(R.id.txtHoraToma);
@@ -166,9 +170,7 @@ public class NuevaMedActivity extends AppCompatActivity {
                         mTimePicker = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                                Date d = new Date();
-                                d.setHours(selectedHour); d.setMinutes(selectedMinute);
-                                hora.setText(d.getHours() + ":" + d.getMinutes());
+                                hora.setText(selectedHour + ":" + selectedMinute);
                             }
                         }, 0, 0, true);//Yes 24 hour time
                         mTimePicker.setTitle(getString(R.string.titleSeleccionaHora));
@@ -193,25 +195,19 @@ public class NuevaMedActivity extends AppCompatActivity {
         DBHandler dbHandler = new DBHandler(this);
 
         if(idMed > 0) {
-            dbHandler.borrarMedYtomas(idMed);
+            dbHandler.actualizarMed(idMed, txtMedNombre.getText().toString(), txtMedDetalle.getText().toString(),
+                    swActiva.isChecked());
+        } else {
+            idMed = (int)dbHandler.insertarMed(txtMedNombre.getText().toString(), txtMedDetalle.getText().toString(),
+                    swActiva.isChecked());
         }
-
-        long idMed = dbHandler.insertarMed(txtMedNombre.getText().toString(), txtMedDetalle.getText().toString(),
-                swActiva.isChecked());
 
         if(idMed != -1) {
 
             for (View v : listaTomas) {
                 ObjToma objToma = new ObjToma();
                 objToma.setIdMed(idMed);
-//                objToma.setLunes(((CheckBox) (v.findViewById(R.id.chkLunes))).isChecked());
-//                objToma.setMartes(((CheckBox) (v.findViewById(R.id.chkMartes))).isChecked());
-//                objToma.setMiercoles(((CheckBox) (v.findViewById(R.id.chkMiercoles))).isChecked());
-//                objToma.setJueves(((CheckBox) (v.findViewById(R.id.chkJueves))).isChecked());
-//                objToma.setViernes(((CheckBox) (v.findViewById(R.id.chkViernes))).isChecked());
-//                objToma.setSabado(((CheckBox) (v.findViewById(R.id.chkSabado))).isChecked());
-//                objToma.setDomingo(((CheckBox) (v.findViewById(R.id.chkDomingo))).isChecked());
-//                objToma.setDetalles(((EditText) (v.findViewById(R.id.txtDetallesToma))).getText().toString());
+                objToma.setIdToma(Integer.parseInt(((TextView) (v.findViewById(R.id.lblIdToma))).getText().toString()));
                 objToma.setLunes(chkLunes.isChecked());
                 objToma.setMartes(chkMartes.isChecked());
                 objToma.setMiercoles(chkMiercoles.isChecked());
@@ -221,8 +217,12 @@ public class NuevaMedActivity extends AppCompatActivity {
                 objToma.setDomingo(chkDomingo.isChecked());
                 objToma.setDetalles(((EditText) (v.findViewById(R.id.txtDetallesToma))).getText().toString());
                 objToma.setHora(((EditText) (v.findViewById(R.id.txtHoraToma))).getText().toString());
-                long insert = dbHandler.insertarTomas(objToma);
-                Toast.makeText(NuevaMedActivity.this, "Insertados: " + insert, Toast.LENGTH_SHORT).show();
+                long insert = dbHandler.actualizarToma(objToma);
+                Toast.makeText(NuevaMedActivity.this, "Mod: " + insert, Toast.LENGTH_SHORT).show();
+                if (insert == 0) {
+                    insert = dbHandler.insertarToma(objToma);
+                    Toast.makeText(NuevaMedActivity.this, "Inserted: " + insert, Toast.LENGTH_SHORT).show();
+                }
                 finish();
             }
 

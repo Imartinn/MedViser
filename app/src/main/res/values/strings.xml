@@ -17,11 +17,14 @@
     <string name="lblDomingo">D</string>
     <string name="lblActiva">Activa</string>
     <string name="titleSeleccionaHora">Selecciona la hora</string>
-    <string name="lblTitLista">HOY</string>
+    <string name="lblTitLista">TUS TOMAS DE HOY</string>
     <string name="title_activity_main2">MedViser</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="add_drug">Add Drug</string>
-    <string name="drug_list">Drug list</string>
+    <string name="add_drug">Añadir Medicina</string>
+    <string name="drug_list">Listado Medicinas</string>
+    <string name="hora">Hora:</string>
+    <string name="detalles">Detalles:</string>
+    <string name="estado">Estado</string>
 </resources>
