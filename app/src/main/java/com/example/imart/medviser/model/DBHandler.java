@@ -15,10 +15,10 @@ import java.util.Calendar;
  */
 public class DBHandler extends SQLiteOpenHelper {
 
-    private final String TABLE_MEDS = "meds";
-    private final String TABLE_TOMAS = "tomas";
-    private final String TABLE_REGISTROS = "registros";
-    private final String TABLE_ESTADOS = "estados";
+    public static final String TABLE_MEDS = "meds";
+    public static final String TABLE_TOMAS = "tomas";
+    public static final String TABLE_REGISTROS = "registros";
+    public static final String TABLE_ESTADOS = "estados";
 
     private final String MEDS_COLUM_IDMED = "idMed";
     private final String MEDS_COLUM_NOMBRE = "nombre";
@@ -255,6 +255,31 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MEDS, MEDS_COLUM_IDMED + " = " + idMed, null);
         db.delete(TABLE_TOMAS, TOMAS_COLUM_IDMED + " = " + idMed, null);
+    }
+
+    public int getUltimoId(String tabla) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = null;
+
+        switch (tabla) {
+            case TABLE_MEDS:
+                c = db.rawQuery("SELECT " + MEDS_COLUM_IDMED + " FROM " + TABLE_MEDS + " ORDER BY " + MEDS_COLUM_IDMED + " DESC LIMIT 1;",
+                        null);
+                break;
+            case TABLE_TOMAS:
+                c = db.rawQuery("SELECT " + TOMAS_COLUM_IDTOMA + " FROM " + TABLE_TOMAS + " ORDER BY " + TOMAS_COLUM_IDTOMA + " DESC LIMIT 1;",
+                        null);
+                break;
+            case TABLE_REGISTROS:
+                c = db.rawQuery("SELECT " + REG_COLUM_IDREG + " FROM " + TABLE_REGISTROS + " ORDER BY " + REG_COLUM_IDREG + " DESC LIMIT 1;",
+                        null);
+                break;
+        }
+
+        if(c.moveToNext()) {
+            return Integer.parseInt(c.getString(0));
+        }
+        return -1;
     }
 
 }
