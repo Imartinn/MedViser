@@ -123,7 +123,8 @@ public class AdaptadorMain extends BaseAdapter {
                 }
 
                 DBHandler dbHandler = new DBHandler(context);
-                long res = dbHandler.insertarRegistro(listaTomas[position].getIdToma(), listaTomas[position].getIdMed(), horaToma + ":" + minsToma,
+                Object[] objs = new Object[] {listaTomas[position].getIdToma(), listaTomas[position].getIdMed(), listaTomas[position].getHoraToma(), calNow.getTimeInMillis(), estado};
+                long res = dbHandler.insertarRegistro(listaTomas[position].getIdToma(), listaTomas[position].getIdMed(), listaTomas[position].getHoraToma(),//horaToma + ":" + minsToma,
                         calNow.getTimeInMillis(), estado);
 
                 ((MainActivity)context).cargarTomasHoy();

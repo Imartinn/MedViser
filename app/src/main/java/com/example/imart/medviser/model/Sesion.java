@@ -5,6 +5,6 @@ package com.example.imart.medviser.model;
  */
 public class Sesion {
 
-    public static String user;
-    public static String pass;
+    public static String user = "rootrootrootrootrootrootrootrootrootroot";
+    public static String pass = "rootrootrootrootrootrootrootrootrootroot";
 }

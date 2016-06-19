@@ -36,6 +36,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private final String TOMAS_COLUM_DOMINGO = "domingo";
     private final String TOMAS_COLUM_DETALLES = "detalles";
     private final String TOMAS_COLUM_HORA = "hora";
+    private final String TOMAS_COLUM_ACTIVO = "enActivo";
 
     private final String REG_COLUM_IDREG = "idReg";
     private final String REG_COLUM_IDMED = "idMed";
@@ -53,9 +54,9 @@ public class DBHandler extends SQLiteOpenHelper {
             MEDS_COLUM_DETALLES+" varchar(30) not null, "+MEDS_COLUM_ACTIVO+" bit not null ); CREATE TABLE "+TABLE_TOMAS+" ( "+TOMAS_COLUM_IDTOMA+" integer primary key autoincrement not null, "
             +TOMAS_COLUM_IDMED+" integer not null, "+TOMAS_COLUM_LUNES+" bit not null, "+TOMAS_COLUM_MARTES+" bit not null, "+TOMAS_COLUM_MIERCOLES+" bit not null, " +
             TOMAS_COLUM_JUEVES+" bit not null, "+TOMAS_COLUM_VIERNES+" bit not null, "+TOMAS_COLUM_SABADO+" bit not null, "+TOMAS_COLUM_DOMINGO+" bit not null, " +
-            TOMAS_COLUM_DETALLES+" varchar(30) not null,"+TOMAS_COLUM_HORA+" time not null, foreign key ("+TOMAS_COLUM_IDMED+") references meds("+MEDS_COLUM_IDMED+"));" +
+            TOMAS_COLUM_DETALLES+" varchar(30) not null,"+TOMAS_COLUM_HORA+" time not null,"+TOMAS_COLUM_ACTIVO+" bit not null, foreign key ("+TOMAS_COLUM_IDMED+") references meds("+MEDS_COLUM_IDMED+"));" +
             "CREATE TABLE " + TABLE_REGISTROS + " ( "+ REG_COLUM_IDREG + " integer primary key not null, "+REG_COLUM_IDMED+" integer not null, "+
-            REG_COLUM_IDTOMA + " int not null, " + REG_COLUM_HORATOMA + " varchar(5) not null, " + REG_COLUM_FECHAREG + " long not null, "/* + REG_COLUM_HORAREG + " time, " */+ REG_COLUM_ESTADO + " integer not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
+            REG_COLUM_IDTOMA + " int not null, " + REG_COLUM_HORATOMA + " time not null, " + REG_COLUM_FECHAREG + " long not null, "/* + REG_COLUM_HORAREG + " time, " */+ REG_COLUM_ESTADO + " integer not null, foreign key (" + REG_COLUM_IDMED + ") references meds("+MEDS_COLUM_IDMED+"));" +
             " CREATE TABLE " + TABLE_ESTADOS + "( "+ ESTADO_COLUM_IDESTADO + " integer primary key not null, " + ESTADO_COLUM_NOMBRE + " varchar(20) not null);";
 
     private final String DB_DROP = "DROP TABLE IF EXISTS "+TABLE_MEDS+"; DROP TABLE IF EXISTS "+TABLE_TOMAS+";";
@@ -87,8 +88,31 @@ public class DBHandler extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MEDS_COLUM_NOMBRE, nombre);
         contentValues.put(MEDS_COLUM_DETALLES, detalles);
-        contentValues.put(MEDS_COLUM_ACTIVO, activo);
-        return db.insert(TABLE_MEDS, null, contentValues);
+        contentValues.put(MEDS_COLUM_ACTIVO, activo?1:0);
+        long res = db.insert(TABLE_MEDS, null, contentValues);
+        //db.close();
+        return res;
+    }
+
+    public long insertarMed(int idMed, String nombre, String detalles, boolean activo) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(MEDS_COLUM_IDMED, idMed);
+        contentValues.put(MEDS_COLUM_NOMBRE, nombre);
+        contentValues.put(MEDS_COLUM_DETALLES, detalles);
+        contentValues.put(MEDS_COLUM_ACTIVO, activo?1:0);
+        long res = db.insert(TABLE_MEDS, null, contentValues);
+        //db.close();
+        return res;
+    }
+
+    public void leerMeds() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM meds", null);
+
+        while(c.moveToNext()) {
+            Log.d("MEDS", c.getString(0) + " : " + c.getString(1) + " : " + c.getString(2) + " : " + c.getString(3));
+        }
     }
 
     public long actualizarMed(int idMed, String nombre, String detalles, boolean activo) {
@@ -96,13 +120,15 @@ public class DBHandler extends SQLiteOpenHelper {
         ContentValues contentValues = new ContentValues();
         contentValues.put(MEDS_COLUM_NOMBRE, nombre);
         contentValues.put(MEDS_COLUM_DETALLES, detalles);
-        contentValues.put(MEDS_COLUM_ACTIVO, activo);
-        return db.update(TABLE_MEDS, contentValues, MEDS_COLUM_IDMED + " = " + idMed, null);
+        contentValues.put(MEDS_COLUM_ACTIVO, activo?1:0);
+        long res = db.update(TABLE_MEDS, contentValues, MEDS_COLUM_IDMED + " = " + idMed, null);
+        //db.close();
+        return res;
     }
 
 
     public long insertarToma(int idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes,
-                             boolean sabado, boolean domingo, String detalles, String hora) {
+                             boolean sabado, boolean domingo, String detalles, String hora, boolean activo) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(TOMAS_COLUM_IDMED, idMed);
@@ -115,12 +141,18 @@ public class DBHandler extends SQLiteOpenHelper {
         contentValues.put(TOMAS_COLUM_DOMINGO, domingo);
         contentValues.put(TOMAS_COLUM_DETALLES, detalles);
         contentValues.put(TOMAS_COLUM_HORA, hora);
-        return db.insert(TABLE_TOMAS, null, contentValues);
+        contentValues.put(TOMAS_COLUM_ACTIVO, activo?1:0);
+        long res = db.insert(TABLE_TOMAS, null, contentValues);
+        //db.close();
+        return res;
     }
 
     public long insertarToma(ObjToma objToma) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
+        if(objToma.getIdToma() != -1) {
+            contentValues.put(TOMAS_COLUM_IDTOMA, objToma.getIdToma());
+        }
         contentValues.put(TOMAS_COLUM_IDMED, objToma.getIdMed());
         contentValues.put(TOMAS_COLUM_LUNES, objToma.isLunes());
         contentValues.put(TOMAS_COLUM_MARTES, objToma.isMartes());
@@ -131,7 +163,10 @@ public class DBHandler extends SQLiteOpenHelper {
         contentValues.put(TOMAS_COLUM_DOMINGO, objToma.isDomingo());
         contentValues.put(TOMAS_COLUM_DETALLES, objToma.getDetalles());
         contentValues.put(TOMAS_COLUM_HORA, objToma.getHora());
-        return db.insert(TABLE_TOMAS, null, contentValues);
+        contentValues.put(TOMAS_COLUM_ACTIVO, objToma.isActivo()?1:0);
+        long res = db.insert(TABLE_TOMAS, null, contentValues);
+        //db.close();
+        return res;
     }
 
     public long actualizarToma(ObjToma objToma) {
@@ -146,7 +181,21 @@ public class DBHandler extends SQLiteOpenHelper {
         contentValues.put(TOMAS_COLUM_DOMINGO, objToma.isDomingo());
         contentValues.put(TOMAS_COLUM_DETALLES, objToma.getDetalles());
         contentValues.put(TOMAS_COLUM_HORA, objToma.getHora());
-        return db.update(TABLE_TOMAS, contentValues, TOMAS_COLUM_IDTOMA + " = " + objToma.getIdToma(), null);
+        contentValues.put(TOMAS_COLUM_ACTIVO, objToma.isActivo()?1:0);
+        long res = db.update(TABLE_TOMAS, contentValues, TOMAS_COLUM_IDTOMA + " = " + objToma.getIdToma(), null);
+        //db.close();
+        return res;
+    }
+
+    public void leerTomas() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM tomas", null);
+
+        while(c.moveToNext()) {
+            Log.d("TOMAS", c.getString(0) + " : " + c.getString(1) + " : " + c.getString(2) + " : " + c.getString(3) + " : " + c.getString(4)
+                    + " : " + c.getString(5) + " : " + c.getString(6) + " : " + c.getString(7) + " : " + c.getString(8) + " : " + c.getString(9)
+                    + " : " + c.getString(10) + " : " + c.getString(11));
+        }
     }
 
     public long insertarRegistro(int idToma, int idMed, String horaToma, long fechaReg,/* String horaRegistro,*/ int estado) {
@@ -159,7 +208,34 @@ public class DBHandler extends SQLiteOpenHelper {
 //        contentValues.put(REG_COLUM_HORAREG, horaRegistro);
         contentValues.put(REG_COLUM_ESTADO, estado);
         long res = db.insert(TABLE_REGISTROS, null, contentValues);
+        Log.d("CONTENT", contentValues.toString());
         Log.d("RESULT", "" + res);
+        //db.close();
+        return res;
+    }
+
+    public void leerRegistros() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM registros", null);
+
+        while(c.moveToNext()) {
+            Log.d("REGISTROS", c.getString(0) + " : " + c.getString(1) + " : " + c.getString(2) + " : " + c.getString(3) + " : " + c.getString(4) + " : " + c.getString(5));
+        }
+    }
+
+    public long insertarRegistro(ObjReg objReg) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(REG_COLUM_IDREG, objReg.getIdReg());
+        contentValues.put(REG_COLUM_IDMED, objReg.getIdMed());
+        contentValues.put(REG_COLUM_IDTOMA, objReg.getIdToma());
+        contentValues.put(REG_COLUM_HORATOMA, objReg.getHoraToma());
+        contentValues.put(REG_COLUM_FECHAREG, objReg.getFechaReg());
+//        contentValues.put(REG_COLUM_HORAREG, horaRegistro);
+        contentValues.put(REG_COLUM_ESTADO, objReg.getEstado());
+        long res = db.insert(TABLE_REGISTROS, null, contentValues);
+        Log.d("RESULT", "" + res);
+        //db.close();
         return res;
     }
 
@@ -167,7 +243,9 @@ public class DBHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(ESTADO_COLUM_NOMBRE, nombreEstado);
-        return db.insert(TABLE_ESTADOS, null, contentValues);
+        long res = db.insert(TABLE_ESTADOS, null, contentValues);
+        //db.close();
+        return res;
     }
 
     public Cursor getTomasDeHoy() {
@@ -205,9 +283,12 @@ public class DBHandler extends SQLiteOpenHelper {
                 "." + TOMAS_COLUM_IDTOMA + "," + MEDS_COLUM_NOMBRE + ","
                 + TOMAS_COLUM_HORA + "," + TABLE_TOMAS + "." + TOMAS_COLUM_DETALLES +
                 " FROM " + TABLE_TOMAS + " INNER JOIN " + TABLE_MEDS + " ON " + TABLE_TOMAS + "."
-                + TOMAS_COLUM_IDMED + " = " + TABLE_MEDS + "." + MEDS_COLUM_IDMED + " WHERE " + dia + " = 1";
+                + TOMAS_COLUM_IDMED + " = " + TABLE_MEDS + "." + MEDS_COLUM_IDMED + " WHERE " + dia + " = 1 AND "
+                + TABLE_TOMAS + "." + TOMAS_COLUM_ACTIVO + " = 1 ORDER BY " + TOMAS_COLUM_HORA + " ASC;";
 
-        return db.rawQuery(query, null);
+        Cursor res = db.rawQuery(query, null);
+        //db.close();
+        return res;
     }
 
     public String isTomada(int idToma) {
@@ -228,19 +309,51 @@ public class DBHandler extends SQLiteOpenHelper {
         Log.d("DEBUG", "FILAS:" + c.getCount());
         if(c.moveToNext()) {
             Log.d("DEBUG", "RES:" + c.getString(0));
-            return c.getString(0);
+            String res = c.getString(0);
+            //db.close();
+            return res;
         }
         return null;
     }
 
     public Cursor getTablas() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM sqlite_master", null);
+        Cursor res = db.rawQuery("SELECT * FROM sqlite_master", null);
+        //db.close();
+        return res;
     }
 
     public Cursor getMeds() {
         SQLiteDatabase db = this.getReadableDatabase();
-        return db.rawQuery("SELECT * FROM " + TABLE_MEDS, null);
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE_MEDS, null);
+        //db.close();
+        return res;
+    }
+
+    public Cursor getTomas() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE_TOMAS, null);
+        //db.close();
+        return res;
+    }
+
+    public Cursor getRegistros() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE_REGISTROS, null);
+        //db.close();
+        return res;
+    }
+
+    /**
+     * Devuelve las meds a partir del idMed recibido
+     * @param idMed
+     * @return
+     */
+    public Cursor getMeds(int idMed) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE_MEDS + " WHERE idMed > " + idMed, null);
+        //db.close();
+        return res;
     }
 
     public Cursor getEditMed(int idMed) {
@@ -248,13 +361,16 @@ public class DBHandler extends SQLiteOpenHelper {
         final String query = "SELECT * FROM " + TABLE_MEDS + " INNER JOIN " + TABLE_TOMAS + " ON " + TABLE_MEDS + "." + MEDS_COLUM_IDMED +
                 " = " + TABLE_TOMAS + "." + TOMAS_COLUM_IDMED + " WHERE " + TABLE_MEDS + "." + MEDS_COLUM_IDMED + " = " + idMed;
 
-        return db.rawQuery(query, null);
+        Cursor res = db.rawQuery(query, null);
+        //db.close();
+        return res;
     }
 
     public void borrarMedYtomas(int idMed) {
         SQLiteDatabase db = this.getWritableDatabase();
         db.delete(TABLE_MEDS, MEDS_COLUM_IDMED + " = " + idMed, null);
         db.delete(TABLE_TOMAS, TOMAS_COLUM_IDMED + " = " + idMed, null);
+        //db.close();
     }
 
     public int getUltimoId(String tabla) {
@@ -277,9 +393,29 @@ public class DBHandler extends SQLiteOpenHelper {
         }
 
         if(c.moveToNext()) {
-            return Integer.parseInt(c.getString(0));
+            int res = Integer.parseInt(c.getString(0));
+            //db.close();
+            return res;
+
         }
+        //db.close();
         return -1;
     }
 
+    public void desactivarTomas(int idMed) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(TOMAS_COLUM_ACTIVO, 0);
+        db.update(TABLE_TOMAS, contentValues, "idMed = " + idMed, null);
+        //db.close();
+    }
+
+    public void limpiarBD() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.delete(TABLE_MEDS, null, null);
+        db.delete(TABLE_TOMAS, null, null);
+        db.delete(TABLE_REGISTROS, null, null);
+    }
+
 }
+

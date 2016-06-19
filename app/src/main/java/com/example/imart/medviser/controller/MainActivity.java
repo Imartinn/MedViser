@@ -15,6 +15,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +24,7 @@ import android.widget.Toast;
 import com.example.imart.medviser.R;
 import com.example.imart.medviser.model.AdaptadorMain;
 import com.example.imart.medviser.model.DBHandler;
+import com.example.imart.medviser.model.RestClient;
 import com.example.imart.medviser.view.objEntradaMain;
 
 import java.io.File;
@@ -31,6 +34,8 @@ public class MainActivity extends AppCompatActivity
 
     private ListView listaTomasHoy;
     private AdaptadorMain adapter;
+    private ImageButton btnDownload;
+    private ImageButton btnUpload;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +45,8 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         listaTomasHoy = (ListView) this.findViewById(R.id.listaTomasHoy);
+        btnDownload = (ImageButton) this.findViewById(R.id.btnDownload);
+        btnUpload = (ImageButton) this.findViewById(R.id.btnUpload);
 
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -68,11 +75,39 @@ public class MainActivity extends AppCompatActivity
 
         cargarTomasHoy();
 
+
+        btnDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        DBHandler dbHandler = new DBHandler(MainActivity.this);
+                        dbHandler.limpiarBD();
+                        RestClient.bajarDelServer(MainActivity.this);
+                    }
+                }).start();
+            }
+        });
+
+        btnUpload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        RestClient.subirAlServer(MainActivity.this);
+                    }
+                }).start();
+            }
+        });
+
+
     }
 
     public void cargarTomasHoy() {
         DBHandler dbHandler = new DBHandler(this);
-
+        dbHandler.leerMeds();
         try {
             Cursor c = dbHandler.getTomasDeHoy();
             objEntradaMain[] listaTomas = new objEntradaMain[c.getCount()];
@@ -102,7 +137,6 @@ public class MainActivity extends AppCompatActivity
                     cadena += c.getString(j);
                 }
             }
-            ((TextView)this.findViewById(R.id.txtDebug)).setText(cadena);
         }
     }
 
@@ -163,13 +197,9 @@ public class MainActivity extends AppCompatActivity
             startActivity(i);
         } else if (id == R.id.nav_slideshow) {
 
-        } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
         }
+
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

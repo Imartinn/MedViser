@@ -74,8 +74,8 @@ public class NuevaMedActivity extends AppCompatActivity {
             btnQuitarHora.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    linToma.removeViewAt(linToma.getChildCount()-1); //La agregamos al contenedor de tomas
-                    listaTomas.remove(listaTomas.size()-1); //Guardamos referencia en el arrayList
+                    linToma.removeViewAt(linToma.getChildCount()-1);
+                    listaTomas.remove(listaTomas.size()-1);
                 }
             });
         }
@@ -95,7 +95,7 @@ public class NuevaMedActivity extends AppCompatActivity {
                         mTimePicker = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                                hora.setText(selectedHour + ":" + selectedMinute);
+                                hora.setText(String.format("%02d", selectedHour) + ":" + String.format("%02d", selectedMinute));
                             }
                         }, 0, 0, true);//Yes 24 hour time
                         mTimePicker.setTitle(getString(R.string.titleSeleccionaHora));
@@ -130,7 +130,7 @@ public class NuevaMedActivity extends AppCompatActivity {
             txtMedNombre.setText(c.getString(1));
             txtMedDetalle.setText(c.getString(2));
             Log.d("ACTIVA", c.getString(3));
-            swActiva.setChecked(Boolean.parseBoolean(c.getString((3))));
+            swActiva.setChecked(c.getInt(3) == 1);
 
             if(c.getString(6).equals("1")) {
                 chkLunes.setChecked(true);
@@ -170,7 +170,7 @@ public class NuevaMedActivity extends AppCompatActivity {
                         mTimePicker = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
                             @Override
                             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                                hora.setText(selectedHour + ":" + selectedMinute);
+                                hora.setText(String.format("%02d", selectedHour) + ":" + String.format("%02d", selectedMinute));
                             }
                         }, 0, 0, true);//Yes 24 hour time
                         mTimePicker.setTitle(getString(R.string.titleSeleccionaHora));
@@ -204,6 +204,9 @@ public class NuevaMedActivity extends AppCompatActivity {
 
         if(idMed != -1) {
 
+            dbHandler.desactivarTomas(idMed);
+            dbHandler.leerTomas();
+
             for (View v : listaTomas) {
                 ObjToma objToma = new ObjToma();
                 objToma.setIdMed(idMed);
@@ -217,6 +220,7 @@ public class NuevaMedActivity extends AppCompatActivity {
                 objToma.setDomingo(chkDomingo.isChecked());
                 objToma.setDetalles(((EditText) (v.findViewById(R.id.txtDetallesToma))).getText().toString());
                 objToma.setHora(((EditText) (v.findViewById(R.id.txtHoraToma))).getText().toString());
+                objToma.setActivo(swActiva.isChecked());
                 long insert = dbHandler.actualizarToma(objToma);
                 Toast.makeText(NuevaMedActivity.this, "Mod: " + insert, Toast.LENGTH_SHORT).show();
                 if (insert == 0) {

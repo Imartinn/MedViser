@@ -16,11 +16,12 @@ public class ObjToma {
     private boolean domingo;
     private String detalles;
     private String hora;
+    private boolean activo;
 
 
     public ObjToma() { };
 
-    public ObjToma(long idToma, long idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes, boolean sabado, boolean domingo, String detalles, String hora) {
+    public ObjToma(long idToma, long idMed, boolean lunes, boolean martes, boolean miercoles, boolean jueves, boolean viernes, boolean sabado, boolean domingo, String detalles, String hora, boolean activo) {
         this.idToma = idToma;
         this.idMed = idMed;
         this.lunes = lunes;
@@ -32,6 +33,7 @@ public class ObjToma {
         this.domingo = domingo;
         this.detalles = detalles;
         this.hora = hora;
+        this.activo = activo;
     }
 
     public long getIdToma() {
@@ -121,4 +123,15 @@ public class ObjToma {
     public void setHora(String hora) {
         this.hora = hora;
     }
+
+    public boolean isActivo() {
+        return activo;
+    }
+
+    public void setActivo(boolean activo) {
+        this.activo = activo;
+    }
+
+
+
 }
