@@ -1,4 +1,4 @@
-package com.example.imart.medviser.model;
+package com.imart.medviser.model;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,9 +11,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.imart.medviser.R;
-import com.example.imart.medviser.controller.MainActivity;
-import com.example.imart.medviser.view.objEntradaMain;
+import com.imart.medviser.R;
+import com.imart.medviser.controller.MainActivity;
+import com.imart.medviser.view.objEntradaMain;
 
 import java.util.Calendar;
 

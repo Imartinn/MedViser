@@ -1,20 +1,18 @@
-package com.example.imart.medviser.controller;
+package com.imart.medviser.controller;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Toast;
 
-import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.ObjMed;
-import com.example.imart.medviser.model.ObjToma;
+import com.imart.medviser.model.DBHandler;
+import com.imart.medviser.model.ObjMed;
+import com.imart.medviser.model.ObjToma;
 
 /**
  * Created by imart on 19/06/2016.
@@ -51,6 +49,7 @@ public class AlarmActivity extends Activity {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         mp.stop();
+                        mp.release();
                         dialog.cancel();
                         Intent i = new Intent(context, MainActivity.class);
                         context.startActivity(i);

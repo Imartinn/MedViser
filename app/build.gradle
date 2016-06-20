@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.2"
 
     defaultConfig {
-        applicationId "com.example.imart.medviser"
+        applicationId "com.imart.medviser"
         minSdkVersion 17
         targetSdkVersion 22
         versionCode 1
@@ -25,7 +25,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.4.0'
     compile 'com.android.support:design:23.3.0'
     compile 'com.loopj.android:android-async-http:1.4.9'
-    compile 'com.greysonparrelli.permiso:permiso:0.2.0'
+    //compile 'com.greysonparrelli.permiso:permiso:0.2.0'
     // https://mvnrepository.com/artifact/commons-codec/commons-codec
     compile group: 'commons-codec', name: 'commons-codec', version: '1.10'
 

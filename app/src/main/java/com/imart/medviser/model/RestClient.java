@@ -1,11 +1,9 @@
-package com.example.imart.medviser.model;
+package com.imart.medviser.model;
 
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.util.Log;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -53,9 +51,9 @@ public class RestClient {
         Log.d("RECIBIENDO", "ROWS");
         try {
             pedirRows(DBHandler.TABLE_MEDS);
-            Thread.sleep(5000);
+            Thread.sleep(1000);
             pedirRows(DBHandler.TABLE_TOMAS);
-            Thread.sleep(5000);
+            Thread.sleep(1000);
             pedirRows(DBHandler.TABLE_REGISTROS);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -98,9 +96,9 @@ public class RestClient {
                         Log.d("ENVIANDO", "ROWS");
                         try {
                             enviarRows(DBHandler.TABLE_MEDS);
-                            Thread.sleep(5000);
+                            Thread.sleep(1000);
                             enviarRows(DBHandler.TABLE_TOMAS);
-                            Thread.sleep(5000);
+                            Thread.sleep(1000);
                             enviarRows(DBHandler.TABLE_REGISTROS);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -505,7 +503,7 @@ public class RestClient {
                              tomas[i].setSabado(jo.getInt("sabado") == 1);
                              tomas[i].setDomingo(jo.getInt("domingo") == 1);
                              tomas[i].setDetalles(jo.getString("detalles"));
-                             tomas[i].setHora(jo.getString("hora"));
+                             tomas[i].setHora(jo.getString("hora").substring(0,4));
                              tomas[i].setActivo(jo.getInt("enActivo") == 1);
                          } catch (JSONException e) {
                              e.printStackTrace();

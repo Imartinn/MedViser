@@ -1,4 +1,4 @@
-package com.example.imart.medviser.model;
+package com.imart.medviser.model;
 
 /**
  * Created by Imartinn on 29/04/16.

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.imart.medviser">
+    package="com.imart.medviser">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -40,7 +40,7 @@
             android:parentActivityName=".controller.MainActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.example.imart.medviser.controller.MainActivity" />
+                android:value="com.imart.medviser.controller.MainActivity" />
         </activity>
     </application>
 

@@ -1,4 +1,4 @@
-package com.example.imart.medviser.controller;
+package com.imart.medviser.controller;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -30,9 +30,9 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.example.imart.medviser.R;
-import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.RestClient;
+import com.imart.medviser.R;
+import com.imart.medviser.model.DBHandler;
+import com.imart.medviser.model.RestClient;
 import com.loopj.android.http.TextHttpResponseHandler;
 
 import org.apache.commons.codec.binary.Hex;

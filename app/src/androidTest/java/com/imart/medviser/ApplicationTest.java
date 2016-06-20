@@ -1,4 +1,4 @@
-package com.example.imart.medviser;
+package com.imart.medviser;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

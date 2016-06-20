@@ -1,4 +1,4 @@
-package com.example.imart.medviser.controller;
+package com.imart.medviser.controller;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -23,12 +23,11 @@ import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.imart.medviser.R;
-import com.example.imart.medviser.model.AdaptadorMain;
-import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.ObjToma;
-import com.example.imart.medviser.model.RestClient;
-import com.example.imart.medviser.view.objEntradaMain;
+import com.imart.medviser.R;
+import com.imart.medviser.model.AdaptadorMain;
+import com.imart.medviser.model.DBHandler;
+import com.imart.medviser.model.ObjToma;
+import com.imart.medviser.view.objEntradaMain;
 
 import java.io.File;
 import java.util.Calendar;

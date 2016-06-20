@@ -1,17 +1,13 @@
-package com.example.imart.medviser.controller;
+package com.imart.medviser.controller;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,12 +17,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-import com.example.imart.medviser.R;
-import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.ObjToma;
+import com.imart.medviser.R;
+import com.imart.medviser.model.DBHandler;
+import com.imart.medviser.model.ObjToma;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class NuevaMedActivity extends AppCompatActivity {
 
@@ -228,10 +223,10 @@ public class NuevaMedActivity extends AppCompatActivity {
                 objToma.setActivo(swActiva.isChecked());
 
                 long insert = dbHandler.actualizarToma(objToma);
-                Toast.makeText(NuevaMedActivity.this, "Mod: " + insert, Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NuevaMedActivity.this, "Mod: " + insert, Toast.LENGTH_SHORT).show();
                 if (insert == 0) {
                     insert = dbHandler.insertarToma(objToma);
-                    Toast.makeText(NuevaMedActivity.this, "Inserted: " + insert, Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(NuevaMedActivity.this, "Inserted: " + insert, Toast.LENGTH_SHORT).show();
                 }
                 finish();
             }

@@ -1,4 +1,4 @@
-package com.example.imart.medviser.controller;
+package com.imart.medviser.controller;
 
 import android.content.Intent;
 import android.database.Cursor;
@@ -9,9 +9,9 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.imart.medviser.R;
-import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.ObjMed;
+import com.imart.medviser.R;
+import com.imart.medviser.model.DBHandler;
+import com.imart.medviser.model.ObjMed;
 
 public class ListMedsActivity extends AppCompatActivity {
 

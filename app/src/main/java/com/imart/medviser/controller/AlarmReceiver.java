@@ -1,20 +1,16 @@
-package com.example.imart.medviser.controller;
+package com.imart.medviser.controller;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.example.imart.medviser.model.DBHandler;
-import com.example.imart.medviser.model.ObjToma;
+import com.imart.medviser.model.DBHandler;
+import com.imart.medviser.model.ObjToma;
 
 import java.util.Calendar;
-import java.util.Date;
 
 public class AlarmReceiver extends BroadcastReceiver {
 

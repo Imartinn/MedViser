@@ -1,4 +1,4 @@
-package com.example.imart.medviser.view;
+package com.imart.medviser.view;
 
 /**
  * Created by imart on 29/05/2016.

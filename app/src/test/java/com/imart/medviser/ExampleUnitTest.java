@@ -1,4 +1,4 @@
-package com.example.imart.medviser;
+package com.imart.medviser;
 
 import org.junit.Test;
 
