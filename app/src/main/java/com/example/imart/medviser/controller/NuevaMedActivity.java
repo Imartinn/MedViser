@@ -1,7 +1,10 @@
 package com.example.imart.medviser.controller;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -23,6 +26,7 @@ import com.example.imart.medviser.model.DBHandler;
 import com.example.imart.medviser.model.ObjToma;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class NuevaMedActivity extends AppCompatActivity {
 
@@ -32,7 +36,7 @@ public class NuevaMedActivity extends AppCompatActivity {
     private EditText txtMedNombre, txtMedDetalle;
     private CheckBox chkLunes, chkMartes, chkMiercoles, chkJueves, chkViernes, chkSabado, chkDomingo;
     private Switch swActiva;
-    private Button btnInsertar;
+    private ImageButton btnInsertar;
     private ArrayList<View> listaTomas;
 
     private int idMed = -1;
@@ -41,7 +45,7 @@ public class NuevaMedActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) { //TODO: Añadir boton de eliminar toma
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nueva_med);
 
@@ -56,7 +60,7 @@ public class NuevaMedActivity extends AppCompatActivity {
         chkSabado = (CheckBox) this.findViewById(R.id.chkSabado);
         chkDomingo = (CheckBox) this.findViewById(R.id.chkDomingo);
         swActiva = (Switch) this.findViewById(R.id.swActiva);
-        btnInsertar = (Button) this.findViewById(R.id.btnInsertar);
+        btnInsertar = (ImageButton) this.findViewById(R.id.btnInsertar);
         listaTomas = new ArrayList<View>();
 
         if(getIntent().getExtras() != null) {
@@ -155,30 +159,31 @@ public class NuevaMedActivity extends AppCompatActivity {
             }
 
             do {
-                //TODO: hacer update de tomas en vez de delete+insert
-                View child = inflater.inflate(R.layout.lintomahora, null); //Generamos la linea
-                TextView lblIdToma = (TextView) child.findViewById(R.id.lblIdToma);
-                lblIdToma.setText(c.getString(4));
-                EditText detalles = (EditText) child.findViewById(R.id.txtDetallesToma);
-                detalles.setText(c.getString(13));
-                final EditText hora = (EditText) child.findViewById(R.id.txtHoraToma);
-                hora.setText(c.getString(14));
-                hora.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        TimePickerDialog mTimePicker;
-                        mTimePicker = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
-                            @Override
-                            public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                                hora.setText(String.format("%02d", selectedHour) + ":" + String.format("%02d", selectedMinute));
-                            }
-                        }, 0, 0, true);//Yes 24 hour time
-                        mTimePicker.setTitle(getString(R.string.titleSeleccionaHora));
-                        mTimePicker.show();
-                    }
-                });
-                linToma.addView(child); //La agregamos al contenedor de tomas
-                listaTomas.add(child); //Guardamos referencia en el arrayList
+                if(c.getInt(15)==1) { //Si la toma esta activa
+                    View child = inflater.inflate(R.layout.lintomahora, null); //Generamos la linea
+                    TextView lblIdToma = (TextView) child.findViewById(R.id.lblIdToma);
+                    lblIdToma.setText(c.getString(4));
+                    EditText detalles = (EditText) child.findViewById(R.id.txtDetallesToma);
+                    detalles.setText(c.getString(13));
+                    final EditText hora = (EditText) child.findViewById(R.id.txtHoraToma);
+                    hora.setText(c.getString(14));
+                    hora.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            TimePickerDialog mTimePicker;
+                            mTimePicker = new TimePickerDialog(v.getContext(), new TimePickerDialog.OnTimeSetListener() {
+                                @Override
+                                public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                                    hora.setText(String.format("%02d", selectedHour) + ":" + String.format("%02d", selectedMinute));
+                                }
+                            }, 0, 0, true);//Yes 24 hour time
+                            mTimePicker.setTitle(getString(R.string.titleSeleccionaHora));
+                            mTimePicker.show();
+                        }
+                    });
+                    linToma.addView(child); //La agregamos al contenedor de tomas
+                    listaTomas.add(child); //Guardamos referencia en el arrayList
+                }
             } while(c.moveToNext());
         }
 
@@ -221,6 +226,7 @@ public class NuevaMedActivity extends AppCompatActivity {
                 objToma.setDetalles(((EditText) (v.findViewById(R.id.txtDetallesToma))).getText().toString());
                 objToma.setHora(((EditText) (v.findViewById(R.id.txtHoraToma))).getText().toString());
                 objToma.setActivo(swActiva.isChecked());
+
                 long insert = dbHandler.actualizarToma(objToma);
                 Toast.makeText(NuevaMedActivity.this, "Mod: " + insert, Toast.LENGTH_SHORT).show();
                 if (insert == 0) {
@@ -232,6 +238,7 @@ public class NuevaMedActivity extends AppCompatActivity {
 
         }
     }
+
 
     private boolean comprobarCampos() {
         if(txtMedNombre.getText().length() < 1) {

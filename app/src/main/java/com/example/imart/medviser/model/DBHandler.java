@@ -417,5 +417,84 @@ public class DBHandler extends SQLiteOpenHelper {
         db.delete(TABLE_REGISTROS, null, null);
     }
 
+    public int[] getIdTomas() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.query(TABLE_TOMAS, new String[] {TOMAS_COLUM_IDTOMA}, null, null, null, null, null);
+        int[] idTomas = new int[c.getCount()];
+        int i=0;
+        while (c.moveToNext()) {
+            idTomas[i] = c.getInt(0);
+            i++;
+        }
+        db.close();
+        return idTomas;
+    }
+
+    public ObjToma getToma(long idToma) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_TOMAS + " WHERE idToma = " + idToma, null);
+        ObjToma objToma = null;
+
+        if(c.moveToNext()) {
+            objToma = new ObjToma();
+            objToma.setIdToma(c.getInt(0));
+            objToma.setIdMed(c.getInt(1));
+            objToma.setLunes(c.getInt(2)==1);
+            objToma.setMartes(c.getInt(3)==1);
+            objToma.setMiercoles(c.getInt(4)==1);
+            objToma.setJueves(c.getInt(5)==1);
+            objToma.setViernes(c.getInt(6)==1);
+            objToma.setSabado(c.getInt(7)==1);
+            objToma.setDomingo(c.getInt(8)==1);
+            objToma.setDetalles(c.getString(9));
+            objToma.setHora(c.getString(10));
+            objToma.setActivo(c.getInt(11)==1);
+        }
+        db.close();
+        return objToma;
+    }
+
+    public ObjToma[] getTomasActivas() {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_TOMAS + " WHERE " + TOMAS_COLUM_ACTIVO + " = 1;", null);
+        ObjToma[] tomas = new ObjToma[c.getCount()];
+
+        int i = 0;
+        while (c.moveToNext()) {
+            tomas[i] = new ObjToma();
+            tomas[i].setIdToma(c.getInt(0));
+            tomas[i].setIdMed(c.getInt(1));
+            tomas[i].setLunes(c.getInt(2)==1);
+            tomas[i].setMartes(c.getInt(3)==1);
+            tomas[i].setMiercoles(c.getInt(4)==1);
+            tomas[i].setJueves(c.getInt(5)==1);
+            tomas[i].setViernes(c.getInt(6)==1);
+            tomas[i].setSabado(c.getInt(7)==1);
+            tomas[i].setDomingo(c.getInt(8)==1);
+            tomas[i].setDetalles(c.getString(9));
+            tomas[i].setHora(c.getString(10));
+            tomas[i].setActivo(c.getInt(11)==1);
+            i++;
+        }
+        db.close();
+        return tomas;
+    }
+
+    public ObjMed getMed(long idMed) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM " + TABLE_MEDS + " WHERE idMed = " + idMed, null);
+        ObjMed med = null;
+
+        if(c.moveToNext()) {
+            med = new ObjMed();
+            med.setIdMed(c.getInt(0));
+            med.setNombre(c.getString(1));
+            med.setDetalles(c.getString(2));
+            med.setEnActivo(c.getInt(3)==1);
+        }
+        db.close();
+        return med;
+    }
 }
+
 

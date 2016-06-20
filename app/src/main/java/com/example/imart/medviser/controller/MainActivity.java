@@ -1,8 +1,12 @@
 package com.example.imart.medviser.controller;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
@@ -15,27 +19,26 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.imart.medviser.R;
 import com.example.imart.medviser.model.AdaptadorMain;
 import com.example.imart.medviser.model.DBHandler;
+import com.example.imart.medviser.model.ObjToma;
 import com.example.imart.medviser.model.RestClient;
 import com.example.imart.medviser.view.objEntradaMain;
 
 import java.io.File;
+import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private ListView listaTomasHoy;
     private AdaptadorMain adapter;
-    private ImageButton btnDownload;
-    private ImageButton btnUpload;
+    private ImageButton btnRefrescar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +48,7 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         listaTomasHoy = (ListView) this.findViewById(R.id.listaTomasHoy);
-        btnDownload = (ImageButton) this.findViewById(R.id.btnDownload);
-        btnUpload = (ImageButton) this.findViewById(R.id.btnUpload);
-
+        btnRefrescar = (ImageButton) this.findViewById(R.id.btnRefrescar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         if (fab != null) {
@@ -75,37 +76,17 @@ public class MainActivity extends AppCompatActivity
 
         cargarTomasHoy();
 
-
-        btnDownload.setOnClickListener(new View.OnClickListener() {
+        btnRefrescar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        DBHandler dbHandler = new DBHandler(MainActivity.this);
-                        dbHandler.limpiarBD();
-                        RestClient.bajarDelServer(MainActivity.this);
-                    }
-                }).start();
+                cargarTomasHoy();
             }
         });
-
-        btnUpload.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        RestClient.subirAlServer(MainActivity.this);
-                    }
-                }).start();
-            }
-        });
-
 
     }
 
     public void cargarTomasHoy() {
+        setearAlarmas();
         DBHandler dbHandler = new DBHandler(this);
         dbHandler.leerMeds();
         try {
@@ -137,6 +118,38 @@ public class MainActivity extends AppCompatActivity
                     cadena += c.getString(j);
                 }
             }
+        }
+    }
+
+    private void setearAlarmas() {
+        desactivarAlarmas();
+        DBHandler dbHandler = new DBHandler(this);
+        ObjToma[] tomas = dbHandler.getTomasActivas();
+
+        for(ObjToma toma : tomas) {
+            //Seteamos el AlarmManager para que salte todos los dias a la hora definida por la toma, el
+            //receiver se encarga de diferenciar los dias elegidos.
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(toma.getHora().split(":")[0]));
+            calendar.set(Calendar.MINUTE, Integer.parseInt(toma.getHora().split(":")[1]));
+            calendar.set(Calendar.SECOND, 0);
+            Calendar ahora = Calendar.getInstance();
+            if(calendar.before(ahora)) { //Si es una alarma pasada
+                continue;
+            }
+            Intent intent = new Intent(this, AlarmReceiver.class);
+            intent.putExtra("detalles", toma.getDetalles());
+            intent.putExtra("idToma", toma.getIdToma());
+            PendingIntent pi = PendingIntent.getBroadcast(this, (int)toma.getIdToma(),
+                    intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            AlarmManager am = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+            if(Build.VERSION.SDK_INT > 18) {
+                am.setExact(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pi);
+            } else {
+                am.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                        AlarmManager.INTERVAL_DAY, pi);
+            }
+
         }
     }
 
@@ -195,8 +208,9 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_listaMeds) {
             Intent i = new Intent(getApplicationContext(), ListMedsActivity.class);
             startActivity(i);
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_login) {
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            startActivity(i);
         }
 
 
@@ -204,6 +218,16 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+    private void desactivarAlarmas() {
+        DBHandler dbHandler = new DBHandler(this);
+        int[] listaIdTomas = dbHandler.getIdTomas();
+        for(int id : listaIdTomas) {
+            PendingIntent pi = PendingIntent.getBroadcast(this, id,
+                    new Intent(this, AlarmReceiver.class), PendingIntent.FLAG_CANCEL_CURRENT);
+        }
     }
 
     @Override

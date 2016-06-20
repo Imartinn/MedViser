@@ -45,6 +45,8 @@ public class RestClient {
 
 
     public static void bajarDelServer(Context context) {
+        Sesion.loadSavedLogin(context);
+
         DBHandler dbHandler = new DBHandler(context);
         ctx = context;
 
@@ -61,6 +63,8 @@ public class RestClient {
     }
 
     public static void subirAlServer(Context context) {
+        Sesion.loadSavedLogin(context);
+
         DBHandler dbHandler = new DBHandler(context);
         ctx = context;
 
