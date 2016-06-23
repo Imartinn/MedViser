@@ -24,7 +24,7 @@ public class RestClient {
 
     private static Context ctx;
 
-    private static final String BASE_URL = "http://192.168.1.250/medViser/";
+    private static final String BASE_URL = "http://medviser.co.nf//";
 
     private static SyncHttpClient client = new SyncHttpClient();
 
@@ -456,7 +456,7 @@ public class RestClient {
 
                 @Override
                 public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-                    Log.d("MEDS ARRAY RECIBIDASF", responseString);
+                    Log.d("MEDS ARRAY RECIBIDASF", responseString + ":" + statusCode);
                 }
             });
         } else if(table.equals(DBHandler.TABLE_TOMAS)) {
